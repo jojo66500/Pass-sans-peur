@@ -1,1641 +1,862 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marion — Mon Espace Thérapeutique</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --sage: #7a9e7e;
-      --sage-light: #b5ceb8;
-      --sage-pale: #eef4ef;
-      --warm: #d4a96a;
-      --warm-light: #f5e8d4;
-      --cream: #faf7f2;
-      --text: #2c2c2c;
-      --text-soft: #6b6b6b;
-      --white: #ffffff;
-      --card-shadow: 0 4px 32px rgba(0,0,0,0.07);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* AMBIENT BACKGROUND */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -200px; right: -200px;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(181,206,184,0.3) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -150px; left: -150px;
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(212,169,106,0.2) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
-
-    /* SCREENS */
-    .screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
-    .screen.active { display: flex; flex-direction: column; }
-
-    /* ===== WELCOME SCREEN ===== */
-    #welcome {
-      align-items: center;
-      justify-content: center;
-      padding: 40px 24px;
-      text-align: center;
-    }
-
-    .welcome-inner { max-width: 480px; width: 100%; }
-
-    .logo-circle {
-      width: 90px; height: 90px;
-      background: linear-gradient(135deg, var(--sage), var(--sage-light));
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 32px;
-      box-shadow: 0 8px 32px rgba(122,158,126,0.3);
-      animation: float 4s ease-in-out infinite;
-    }
-    .logo-circle svg { width: 42px; height: 42px; fill: white; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .welcome-greeting {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      font-weight: 400;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--sage);
-      margin-bottom: 12px;
-    }
-
-    .welcome-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(40px, 10vw, 56px);
-      font-weight: 300;
-      line-height: 1.1;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-    .welcome-title em { font-style: italic; color: var(--sage); }
-
-    .welcome-sub {
-      font-size: 15px;
-      color: var(--text-soft);
-      line-height: 1.6;
-      margin-bottom: 48px;
-    }
-
-    .welcome-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .welcome-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 20px 16px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      box-shadow: var(--card-shadow);
-      transition: all 0.25s ease;
-      text-align: left;
-    }
-    .welcome-card:hover {
-      border-color: var(--sage-light);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.1);
-    }
-
-    .welcome-card-icon {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    .welcome-card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .welcome-card-desc {
-      font-size: 12px;
-      color: var(--text-soft);
-      line-height: 1.4;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--sage), #5d8262);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 16px 40px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 20px rgba(122,158,126,0.4);
-      text-decoration: none;
-      letter-spacing: 0.3px;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(122,158,126,0.5);
-    }
-
-    .btn-secondary {
-      display: inline-block;
-      background: transparent;
-      color: var(--sage);
-      border: 1.5px solid var(--sage-light);
-      border-radius: 50px;
-      padding: 14px 32px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-decoration: none;
-    }
-    .btn-secondary:hover { background: var(--sage-pale); }
-
-    /* ===== HEADER / NAV ===== */
-    .app-header {
-      background: rgba(250,247,242,0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(181,206,184,0.3);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0; z-index: 100;
-    }
-
-    .header-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--sage);
-      cursor: pointer;
-    }
-
-    .header-back {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-soft);
-      cursor: pointer;
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-    .header-back:hover { color: var(--sage); }
-
-    /* ===== MAIN MENU SCREEN ===== */
-    #menu { padding: 0; }
-
-    .menu-hero {
-      background: linear-gradient(135deg, var(--sage) 0%, #5d8262 100%);
-      padding: 40px 24px 50px;
-      color: white;
-      position: relative;
-      overflow: hidden;
-    }
-    .menu-hero::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; left: 0; right: 0;
-      height: 60px;
-      background: var(--cream);
-      border-radius: 50% 50% 0 0 / 60px 60px 0 0;
-    }
-
-    .menu-hero-greeting {
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 8px;
-    }
-    .menu-hero-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 40px;
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 8px;
-    }
-    .menu-hero-name em { font-style: italic; }
-    .menu-hero-sub { font-size: 14px; opacity: 0.75; }
-
-    .menu-body { padding: 20px 20px 100px; }
-
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--sage);
-      font-weight: 500;
-      margin-bottom: 14px;
-      margin-top: 28px;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .menu-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 22px 18px;
-      cursor: pointer;
-      box-shadow: var(--card-shadow);
-      transition: all 0.25s ease;
-      border: 2px solid transparent;
-      position: relative;
-      overflow: hidden;
-    }
-    .menu-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--sage), var(--warm));
-      transform: scaleX(0);
-      transition: transform 0.25s ease;
-    }
-    .menu-card:hover::before { transform: scaleX(1); }
-    .menu-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
-    }
-    .menu-card.full-width { grid-column: 1 / -1; }
-
-    .menu-card-icon { font-size: 32px; margin-bottom: 10px; }
-    .menu-card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--text);
-    }
-    .menu-card-desc { font-size: 12px; color: var(--text-soft); line-height: 1.4; }
-
-    /* BOTTOM NAV */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(181,206,184,0.3);
-      display: flex;
-      z-index: 100;
-    }
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 0 8px;
-      cursor: pointer;
-      color: var(--text-soft);
-      font-size: 10px;
-      gap: 4px;
-      transition: color 0.2s;
-    }
-    .nav-item.active { color: var(--sage); }
-    .nav-item svg { width: 22px; height: 22px; }
-
-    /* ===== TCC MODULE ===== */
-    #tcc-module { flex-direction: column; }
-
-    .module-body { padding: 24px 20px 100px; flex: 1; }
-
-    .intro-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 20px;
-    }
-    .intro-card h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 400;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-    .intro-card p {
-      font-size: 14px;
-      color: var(--text-soft);
-      line-height: 1.7;
-    }
-
-    .phase-list { display: flex; flex-direction: column; gap: 12px; }
-
-    .phase-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--card-shadow);
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      cursor: pointer;
-      transition: all 0.25s;
-      border-left: 4px solid var(--sage-light);
-    }
-    .phase-card:hover { transform: translateX(4px); border-left-color: var(--sage); }
-
-    .phase-number {
-      width: 36px; height: 36px;
-      background: var(--sage-pale);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--sage);
-      flex-shrink: 0;
-    }
-
-    .phase-content h3 {
-      font-size: 15px;
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-    .phase-content p { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
-
-    .badge {
-      display: inline-block;
-      background: var(--sage-pale);
-      color: var(--sage);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 500;
-      margin-top: 6px;
-    }
-
-    /* ===== HYPNOSE SCREEN ===== */
-    #hypnose-screen { flex-direction: column; }
-
-    .audio-hero {
-      background: linear-gradient(160deg, #2c3e35 0%, #1a2420 100%);
-      padding: 48px 24px 60px;
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .audio-hero::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; left: 0; right: 0;
-      height: 60px;
-      background: var(--cream);
-      border-radius: 50% 50% 0 0 / 60px 60px 0 0;
-    }
-
-    /* Orbs */
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(40px);
-      opacity: 0.3;
-    }
-    .orb-1 { width: 200px; height: 200px; background: var(--sage); top: -60px; right: -60px; }
-    .orb-2 { width: 150px; height: 150px; background: var(--warm); bottom: 20px; left: -40px; }
-
-    .audio-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
-      font-weight: 300;
-      margin-bottom: 8px;
-      position: relative;
-    }
-    .audio-hero p { font-size: 14px; opacity: 0.7; position: relative; }
-
-    .audio-list { padding: 20px 20px 100px; display: flex; flex-direction: column; gap: 14px; }
-
-    .audio-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: var(--card-shadow);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .audio-card:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(0,0,0,0.1); }
-
-    .play-btn {
-      width: 52px; height: 52px;
-      background: linear-gradient(135deg, var(--sage), #5d8262);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 4px 16px rgba(122,158,126,0.4);
-      transition: transform 0.2s;
-    }
-    .play-btn:hover { transform: scale(1.05); }
-    .play-btn svg { width: 20px; height: 20px; fill: white; margin-left: 3px; }
-
-    .audio-info { flex: 1; }
-    .audio-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-    .audio-desc { font-size: 12px; color: var(--text-soft); margin-bottom: 6px; }
-    .audio-duration {
-      font-size: 11px;
-      color: var(--sage);
-      font-weight: 500;
-    }
-
-    /* Audio Player Expanded */
-    .player-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      align-items: flex-end;
-    }
-    .player-overlay.open { display: flex; }
-
-    .player-sheet {
-      background: #1c2a22;
-      border-radius: 28px 28px 0 0;
-      padding: 32px 28px 48px;
-      width: 100%;
-      color: white;
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
-    .player-handle {
-      width: 40px; height: 4px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
-      margin: 0 auto 28px;
-    }
-
-    .player-track {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 300;
-      margin-bottom: 4px;
-    }
-    .player-sub { font-size: 13px; opacity: 0.5; margin-bottom: 32px; }
-
-    .player-visual {
-      height: 80px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      overflow: hidden;
-    }
-
-    .wave-bar {
-      width: 3px;
-      background: var(--sage-light);
-      border-radius: 2px;
-      animation: wave 1.4s ease-in-out infinite;
-    }
-    @keyframes wave {
-      0%, 100% { height: 8px; opacity: 0.4; }
-      50% { height: 40px; opacity: 1; }
-    }
-
-    .player-progress {
-      width: 100%;
-      height: 4px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 2px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      position: relative;
-    }
-    .player-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--sage), var(--sage-light));
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.5s linear;
-    }
-
-    .player-times {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      opacity: 0.5;
-      margin-bottom: 28px;
-    }
-
-    .player-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-    }
-
-    .ctrl-btn {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-      display: flex;
-      align-items: center;
-    }
-    .ctrl-btn:hover { opacity: 1; }
-    .ctrl-btn svg { width: 28px; height: 28px; fill: white; }
-
-    .ctrl-play {
-      width: 64px; height: 64px;
-      background: linear-gradient(135deg, var(--sage), #5d8262);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 32px rgba(122,158,126,0.5);
-    }
-    .ctrl-play svg { width: 28px; height: 28px; margin-left: 3px; }
-    .ctrl-play:hover { opacity: 1; transform: scale(1.05); }
-
-    .player-note {
-      margin-top: 24px;
-      padding: 14px 16px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      font-size: 12px;
-      opacity: 0.6;
-      line-height: 1.5;
-      text-align: center;
-    }
-
-    /* ===== JOURNAL / EMOTIONS ===== */
-    #journal-screen { flex-direction: column; }
-
-    .journal-body { padding: 24px 20px 100px; }
-
-    .emotion-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .emotion-btn {
-      background: var(--white);
-      border: 2px solid transparent;
-      border-radius: 16px;
-      padding: 16px 8px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: var(--card-shadow);
-      transition: all 0.2s;
-    }
-    .emotion-btn:hover, .emotion-btn.selected {
-      border-color: var(--sage);
-      background: var(--sage-pale);
-      transform: scale(1.03);
-    }
-    .emotion-btn .emoji { font-size: 28px; margin-bottom: 4px; display: block; }
-    .emotion-btn .label { font-size: 11px; color: var(--text-soft); }
-
-    textarea {
-      width: 100%;
-      background: var(--white);
-      border: 1.5px solid rgba(181,206,184,0.5);
-      border-radius: 16px;
-      padding: 18px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--text);
-      resize: none;
-      height: 130px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    textarea:focus { border-color: var(--sage); }
-    textarea::placeholder { color: rgba(107,107,107,0.5); }
-
-    .save-entry-btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--sage), #5d8262);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 16px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 16px;
-      box-shadow: 0 4px 20px rgba(122,158,126,0.4);
-      transition: all 0.25s;
-    }
-    .save-entry-btn:hover { transform: translateY(-2px); }
-
-    .past-entries { margin-top: 28px; }
-    .entry-item {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 16px 18px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 10px;
-    }
-    .entry-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .entry-emoji { font-size: 22px; }
-    .entry-date { font-size: 11px; color: var(--text-soft); }
-    .entry-text { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
-
-    /* ===== ANXIÉTÉ MALADIE ===== */
-    #anxiety-screen { flex-direction: column; }
-    .anxiety-body { padding: 24px 20px 100px; }
-
-    .cycle-visual {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .cycle-visual h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-    .cycle-visual p { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
-
-    .cycle-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .cycle-step {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-left: 2px solid var(--sage-light);
-      padding-left: 20px;
-      position: relative;
-    }
-    .cycle-step::before {
-      content: '';
-      position: absolute;
-      left: -6px;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--sage);
-    }
-    .cycle-step:last-child { border-left: 2px solid transparent; }
-
-    .step-icon { font-size: 22px; flex-shrink: 0; }
-    .step-text { font-size: 13px; color: var(--text); line-height: 1.4; }
-    .step-text strong { display: block; font-weight: 500; margin-bottom: 2px; }
-
-    .tip-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-    .tip-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--card-shadow);
-      border-left: 4px solid var(--warm);
-    }
-    .tip-card h4 {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-    .tip-card p { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
-
-    /* ===== OUTILS ===== */
-    #tools-screen { flex-direction: column; }
-    .tools-body { padding: 24px 20px 100px; }
-
-    .tool-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 14px;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .tool-card:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(0,0,0,0.1); }
-
-    .tool-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-    .tool-icon {
-      width: 48px; height: 48px;
-      background: var(--sage-pale);
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
-    .tool-card-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 600;
-    }
-    .tool-card p { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
-
-    .breathing-exercise {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 28px 24px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 14px;
-      text-align: center;
-    }
-    .breath-circle {
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(122,158,126,0.2), rgba(122,158,126,0.5));
-      border: 3px solid var(--sage-light);
-      margin: 24px auto;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 16px;
-      color: var(--sage);
-      transition: transform 4s ease;
-      cursor: pointer;
-    }
-    .breath-circle.inhale { transform: scale(1.4); }
-    .breath-circle.exhale { transform: scale(0.8); }
-
-    .breath-label { font-size: 14px; color: var(--text-soft); margin-bottom: 16px; }
-    .breath-start {
-      background: linear-gradient(135deg, var(--sage), #5d8262);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 12px 28px;
-      font-size: 14px;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      box-shadow: 0 4px 16px rgba(122,158,126,0.3);
-    }
-
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: #2c2c2c;
-      color: white;
-      border-radius: 50px;
-      padding: 12px 24px;
-      font-size: 13px;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 300;
-      white-space: nowrap;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* Utility */
-    .mt-16 { margin-top: 16px; }
-    .text-center { text-align: center; }
-
-    @media (min-width: 600px) {
-      .welcome-cards { grid-template-columns: repeat(2, 1fr); }
-      .menu-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Marion — La Quête du Calme Intérieur</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #131920;
+  --panel: #1a2433;
+  --border: rgba(100,180,140,0.2);
+  --green: #4caf82;
+  --green-glow: #4caf8266;
+  --gold: #d4a843;
+  --gold-glow: #d4a84350;
+  --red: #e05c5c;
+  --red-soft: rgba(224,92,92,0.15);
+  --blue: #5b9bd5;
+  --text: #dde8ee;
+  --text-soft: #7a92a3;
+  --text-muted: #4a6070;
+  --serif: 'Cinzel', serif;
+  --sans: 'Lato', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; overflow-x:hidden; }
+
+.stars { position:fixed; inset:0; pointer-events:none; z-index:0;
+  background: radial-gradient(ellipse at 20% 30%, rgba(76,175,130,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(91,155,213,0.06) 0%, transparent 50%); }
+
+.screen { display:none; min-height:100vh; position:relative; z-index:1; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* INTRO */
+#intro { align-items:center; justify-content:center; padding:32px 20px; text-align:center; }
+.intro-sigil { width:110px; height:110px; margin:0 auto 28px; position:relative; }
+.sigil-ring { width:110px; height:110px; border-radius:50%; border:2px solid var(--green); position:absolute;
+  box-shadow:0 0 20px var(--green-glow), inset 0 0 20px rgba(76,175,130,0.1); animation:rotate 12s linear infinite; }
+.sigil-ring-2 { width:80px; height:80px; top:15px; left:15px; border:1px solid var(--gold);
+  animation:rotate 8s linear infinite reverse; box-shadow:0 0 12px var(--gold-glow); }
+@keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.sigil-core { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:42px; animation:pulse 3s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.intro-eyebrow { font-family:var(--serif); font-size:11px; letter-spacing:4px; text-transform:uppercase;
+  color:var(--green); margin-bottom:12px; opacity:0.8; }
+.intro-title { font-family:var(--serif); font-size:clamp(26px,7vw,40px); font-weight:700; color:var(--text);
+  line-height:1.15; margin-bottom:8px; text-shadow:0 0 40px rgba(76,175,130,0.3); }
+.intro-title span { color:var(--gold); }
+.intro-sub { font-size:14px; color:var(--text-soft); line-height:1.7; margin-bottom:36px;
+  max-width:340px; margin-left:auto; margin-right:auto; }
+.xp-bar-container { background:var(--panel); border:1px solid var(--border); border-radius:20px;
+  padding:16px 20px; margin-bottom:28px; width:100%; max-width:380px; }
+.xp-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.xp-label-text { font-size:12px; color:var(--text-soft); font-family:var(--serif); letter-spacing:1px; }
+.xp-count { font-size:13px; color:var(--gold); font-weight:700; }
+.xp-track { height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+.xp-fill { height:100%; background:linear-gradient(90deg,var(--green),#7ed4a0); border-radius:4px;
+  transition:width 0.8s cubic-bezier(.4,0,.2,1); box-shadow:0 0 8px var(--green-glow); }
+.level-badge { display:inline-flex; align-items:center; gap:8px;
+  background:rgba(212,168,67,0.12); border:1px solid rgba(212,168,67,0.3); border-radius:50px;
+  padding:8px 20px; font-family:var(--serif); font-size:13px; color:var(--gold); margin-bottom:16px; }
+.level-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 6px var(--gold-glow); }
+.btn-quest { display:inline-block; background:linear-gradient(135deg,#2d7a56,#3fa570); color:white;
+  border:none; border-radius:14px; padding:18px 40px; font-family:var(--serif); font-size:15px;
+  font-weight:600; letter-spacing:1px; cursor:pointer;
+  box-shadow:0 4px 24px var(--green-glow), 0 0 0 1px rgba(76,175,130,0.3);
+  transition:all 0.25s; text-transform:uppercase; }
+.btn-quest:hover { transform:translateY(-2px); box-shadow:0 8px 36px var(--green-glow); }
+.btn-quest:active { transform:translateY(0); }
+
+/* MAP */
+#map { flex-direction:column; }
+.map-header { padding:20px 20px 0; display:flex; justify-content:space-between; align-items:center; }
+.map-header-title { font-family:var(--serif); font-size:16px; color:var(--green); }
+.map-header-xp { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--gold); }
+.map-xp-mini { width:100px; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+.map-xp-mini-fill { height:100%; background:var(--gold); border-radius:3px; transition:width 0.6s; }
+.map-scroll { padding:16px 20px 100px; }
+.map-world-title { font-family:var(--serif); font-size:11px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:18px; margin-top:16px; }
+.stat-strip { background:var(--panel); border:1px solid var(--border); border-radius:14px;
+  padding:14px 18px; margin-bottom:16px; display:flex; }
+.stat-item { flex:1; text-align:center; }
+.stat-item + .stat-item { border-left:1px solid var(--border); }
+.stat-val { font-family:var(--serif); font-size:22px; color:var(--gold); }
+.stat-lbl { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+/* LEVEL CARDS */
+.level-card { background:var(--panel); border:1px solid var(--border); border-radius:18px;
+  padding:20px 18px; margin-bottom:12px; cursor:pointer; transition:all 0.25s; position:relative; overflow:hidden; }
+.level-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--green),transparent); transform:scaleX(0);
+  transform-origin:left; transition:transform 0.3s; }
+.level-card:hover::before { transform:scaleX(1); }
+.level-card:hover { border-color:rgba(76,175,130,0.4); transform:translateY(-2px); }
+.level-card.locked { opacity:0.45; cursor:not-allowed; }
+.level-card.locked:hover { transform:none; border-color:var(--border); }
+.level-card.completed { border-color:rgba(76,175,130,0.5); }
+.level-card.completed::before { transform:scaleX(1); background:linear-gradient(90deg,var(--green),#7ed4a0); }
+.level-card-top { display:flex; gap:14px; align-items:flex-start; margin-bottom:12px; }
+.level-icon { width:52px; height:52px; border-radius:14px; display:flex; align-items:center;
+  justify-content:center; font-size:24px; flex-shrink:0; }
+.level-icon.green { background:rgba(76,175,130,0.15); }
+.level-icon.gold { background:rgba(212,168,67,0.15); }
+.level-icon.blue { background:rgba(91,155,213,0.15); }
+.level-icon.red { background:rgba(224,92,92,0.15); }
+.level-icon.purple { background:rgba(160,120,200,0.15); }
+.level-num { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:2px; font-family:var(--serif); }
+.level-name { font-family:var(--serif); font-size:17px; font-weight:600; color:var(--text); margin-bottom:3px; }
+.level-desc { font-size:12px; color:var(--text-soft); line-height:1.4; }
+.level-footer { display:flex; gap:8px; flex-wrap:wrap; }
+.tag { display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:4px 10px;
+  font-size:11px; color:var(--text-soft); }
+.tag.green { border-color:rgba(76,175,130,0.3); color:var(--green); background:rgba(76,175,130,0.07); }
+.tag.gold { border-color:rgba(212,168,67,0.3); color:var(--gold); background:rgba(212,168,67,0.07); }
+.lock-icon { margin-left:auto; font-size:18px; opacity:0.4; }
+.check-icon { margin-left:auto; font-size:18px; color:var(--green); }
+.boss-card { background:linear-gradient(135deg,rgba(224,92,92,0.1),rgba(160,80,80,0.08));
+  border:1px solid rgba(224,92,92,0.3); border-radius:18px; padding:22px 18px;
+  margin-bottom:12px; position:relative; overflow:hidden; cursor:pointer; }
+.boss-card::before { content:''; position:absolute; top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--red),rgba(224,92,92,0.2)); }
+.boss-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(224,92,92,0.15);
+  border:1px solid rgba(224,92,92,0.3); border-radius:20px; padding:4px 12px;
+  font-size:10px; font-family:var(--serif); letter-spacing:2px; color:var(--red);
+  text-transform:uppercase; margin-bottom:12px; }
+.boss-name { font-family:var(--serif); font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.boss-desc { font-size:12px; color:var(--text-soft); line-height:1.5; }
+
+/* PLAY */
+#play { flex-direction:column; }
+.play-header { padding:16px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+.back-btn { width:36px; height:36px; background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text-soft); font-size:16px; transition:all 0.2s; }
+.back-btn:hover { background:rgba(76,175,130,0.1); color:var(--green); border-color:var(--green); }
+.play-header-info { flex:1; }
+.play-level-num { font-size:10px; letter-spacing:2px; color:var(--text-muted); font-family:var(--serif); text-transform:uppercase; }
+.play-level-name { font-family:var(--serif); font-size:17px; color:var(--text); }
+.play-xp { font-size:12px; color:var(--gold); }
+.step-progress { padding:16px 20px 8px; }
+.step-dots { display:flex; gap:6px; }
+.step-dot { flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,0.08); transition:background 0.4s; }
+.step-dot.done { background:var(--green); box-shadow:0 0 6px var(--green-glow); }
+.step-dot.active { background:var(--gold); box-shadow:0 0 6px var(--gold-glow); animation:blink 1.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.play-body { padding:20px 20px 120px; flex:1; }
+.step-card { background:var(--panel); border:1px solid var(--border); border-radius:20px;
+  padding:28px 22px; animation:fadeInUp 0.35s ease; }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.step-emoji { font-size:44px; margin-bottom:16px; text-align:center; }
+.step-title { font-family:var(--serif); font-size:22px; font-weight:600; margin-bottom:10px; }
+.step-text { font-size:14px; color:var(--text-soft); line-height:1.75; margin-bottom:20px; }
+.step-text strong { color:var(--text); font-weight:700; }
+.step-text .highlight { background:rgba(76,175,130,0.1); border-left:3px solid var(--green);
+  border-radius:0 8px 8px 0; padding:10px 14px; display:block; margin:12px 0;
+  font-size:13px; color:var(--text); line-height:1.6; }
+.step-text .danger { background:var(--red-soft); border-left:3px solid var(--red);
+  border-radius:0 8px 8px 0; padding:10px 14px; display:block; margin:12px 0;
+  font-size:13px; color:var(--text); line-height:1.6; }
+.choices { display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+.choice-btn { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:16px 18px; font-family:var(--sans); font-size:14px;
+  color:var(--text); cursor:pointer; text-align:left; transition:all 0.2s; line-height:1.4; }
+.choice-btn:hover { background:rgba(76,175,130,0.1); border-color:var(--green); }
+.choice-btn.correct { background:rgba(76,175,130,0.15); border-color:var(--green); color:var(--green); }
+.choice-btn.wrong { background:var(--red-soft); border-color:var(--red); color:var(--red); }
+.choice-btn:disabled { cursor:default; }
+.breath-mini { display:flex; flex-direction:column; align-items:center; padding:20px 0; }
+.breath-orb { width:100px; height:100px; border-radius:50%;
+  background:radial-gradient(circle,rgba(76,175,130,0.3),rgba(76,175,130,0.05));
+  border:2px solid var(--green); box-shadow:0 0 20px var(--green-glow);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:var(--green); font-family:var(--serif);
+  transition:transform 4s ease, box-shadow 4s ease; margin-bottom:16px; cursor:pointer; }
+.breath-orb.expand { transform:scale(1.5); box-shadow:0 0 50px var(--green-glow); }
+.breath-orb.shrink { transform:scale(0.75); box-shadow:0 0 8px var(--green-glow); }
+.breath-instruction { font-size:14px; color:var(--text-soft); text-align:center; margin-bottom:8px; }
+.breath-timer { font-family:var(--serif); font-size:32px; color:var(--green); }
+.reflection-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:12px; padding:16px; font-family:var(--sans); font-size:14px; color:var(--text);
+  resize:none; height:110px; outline:none; transition:border-color 0.2s; margin-top:8px; }
+.reflection-input:focus { border-color:var(--green); }
+.reflection-input::placeholder { color:var(--text-muted); }
+.audio-play-card { background:rgba(76,175,130,0.05); border:1px solid rgba(76,175,130,0.2);
+  border-radius:16px; padding:20px; display:flex; align-items:center; gap:16px;
+  cursor:pointer; transition:all 0.25s; margin-top:8px; }
+.audio-play-card:hover { background:rgba(76,175,130,0.1); border-color:rgba(76,175,130,0.4); }
+.audio-play-btn { width:54px; height:54px; border-radius:50%;
+  background:linear-gradient(135deg,#2d7a56,#4caf82); display:flex; align-items:center;
+  justify-content:center; box-shadow:0 4px 16px var(--green-glow); flex-shrink:0; font-size:20px; }
+.audio-play-title { font-family:var(--serif); font-size:16px; margin-bottom:3px; }
+.audio-play-sub { font-size:12px; color:var(--text-soft); }
+.audio-play-duration { font-size:11px; color:var(--green); margin-top:5px; font-weight:700; }
+
+/* REWARD */
+#reward { align-items:center; justify-content:center; text-align:center; padding:32px 24px;
+  background:radial-gradient(ellipse at center,rgba(212,168,67,0.08) 0%,transparent 60%); }
+.reward-burst { font-size:80px; margin-bottom:20px; animation:burst 0.6s cubic-bezier(.2,2,.4,1); }
+@keyframes burst { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.reward-title { font-family:var(--serif); font-size:32px; font-weight:700; color:var(--gold);
+  margin-bottom:8px; text-shadow:0 0 30px var(--gold-glow); }
+.reward-sub { font-size:14px; color:var(--text-soft); margin-bottom:28px; line-height:1.6; }
+.reward-xp-gain { display:inline-flex; align-items:center; gap:8px;
+  background:rgba(212,168,67,0.12); border:1px solid rgba(212,168,67,0.3);
+  border-radius:50px; padding:12px 28px; font-family:var(--serif); font-size:18px;
+  color:var(--gold); margin-bottom:28px; }
+.reward-unlock { background:var(--panel); border:1px solid var(--border); border-radius:16px;
+  padding:16px 20px; margin-bottom:28px; text-align:left; }
+.reward-unlock-label { font-size:10px; letter-spacing:2px; color:var(--text-muted);
+  text-transform:uppercase; font-family:var(--serif); margin-bottom:6px; }
+.reward-unlock-text { font-size:14px; color:var(--text); }
+
+/* NAV */
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:50;
+  background:rgba(13,17,23,0.95); backdrop-filter:blur(12px);
+  border-top:1px solid var(--border); display:flex; }
+.nav-it { flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:12px 0 10px; cursor:pointer; color:var(--text-muted); font-size:10px;
+  gap:4px; transition:color 0.2s; font-family:var(--serif); letter-spacing:0.5px; }
+.nav-it.active { color:var(--green); }
+.nav-it svg { width:22px; height:22px; }
+
+/* TOAST */
+.toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(10px);
+  background:var(--panel); border:1px solid var(--green); color:var(--text); border-radius:50px;
+  padding:12px 24px; font-size:13px; opacity:0; transition:all 0.3s; z-index:200;
+  white-space:nowrap; box-shadow:0 4px 20px var(--green-glow); }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* PLAYER */
+.player-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px); z-index:300; align-items:flex-end; }
+.player-overlay.open { display:flex; }
+.player-sheet { background:var(--panel); border-top:1px solid var(--border);
+  border-radius:28px 28px 0 0; padding:28px 24px 52px; width:100%; animation:slideUp 0.3s ease; }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.player-handle { width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin:0 auto 24px;cursor:pointer; }
+.player-track { font-family:var(--serif);font-size:22px;margin-bottom:4px; }
+.player-sub { font-size:12px;color:var(--text-soft);margin-bottom:24px; }
+.player-waves { height:60px;display:flex;align-items:center;gap:2px;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:20px;padding:0 10px;overflow:hidden; }
+.wbar { width:3px;border-radius:2px;background:var(--green);animation:wav 1.3s ease-in-out infinite; }
+@keyframes wav { 0%,100%{height:4px;opacity:0.3} 50%{height:36px;opacity:1} }
+.player-progress { width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;cursor:pointer;margin-bottom:6px;position:relative; }
+.player-progress-fill { height:100%;background:linear-gradient(90deg,var(--green),#7ed4a0);border-radius:2px;width:0%;transition:width 0.5s linear; }
+.player-times { display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:24px; }
+.player-controls { display:flex;align-items:center;justify-content:center;gap:24px; }
+.ctrl { background:none;border:none;color:var(--text-soft);cursor:pointer;opacity:0.7;transition:all 0.2s;font-size:14px;font-family:var(--sans); }
+.ctrl:hover{opacity:1;color:var(--text);}
+.ctrl-main { width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#2d7a56,#4caf82);display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px var(--green-glow);font-size:22px;cursor:pointer;transition:all 0.2s;border:none; }
+.ctrl-main:hover{transform:scale(1.05);}
+</style>
 </head>
 <body>
-
-<!-- TOAST -->
+<div class="stars"></div>
 <div class="toast" id="toast"></div>
 
-<!-- ============ WELCOME ============ -->
-<div class="screen active" id="welcome">
-  <div class="welcome-inner">
-    <div class="logo-circle">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-      </svg>
-    </div>
-    <p class="welcome-greeting">Votre espace bien-être</p>
-    <h1 class="welcome-title">Bonjour,<br><em>Marion</em> 🌿</h1>
-    <p class="welcome-sub">Un espace dédié à votre parcours thérapeutique — thérapies cognitives, autohypnose et outils du quotidien.</p>
-
-    <div class="welcome-cards">
-      <div class="welcome-card" onclick="showScreen('menu')">
-        <div class="welcome-card-icon">🧠</div>
-        <div class="welcome-card-title">TCC</div>
-        <div class="welcome-card-desc">Thérapie cognitivo-comportementale</div>
-      </div>
-      <div class="welcome-card" onclick="showScreen('hypnose-screen')">
-        <div class="welcome-card-icon">🎧</div>
-        <div class="welcome-card-title">Hypnose</div>
-        <div class="welcome-card-desc">Séances d'autohypnose guidée</div>
-      </div>
-      <div class="welcome-card" onclick="showScreen('journal-screen')">
-        <div class="welcome-card-icon">📓</div>
-        <div class="welcome-card-title">Journal</div>
-        <div class="welcome-card-desc">Suivre mes émotions</div>
-      </div>
-      <div class="welcome-card" onclick="showScreen('tools-screen')">
-        <div class="welcome-card-icon">🛠️</div>
-        <div class="welcome-card-title">Outils</div>
-        <div class="welcome-card-desc">Exercices & techniques</div>
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="showScreen('menu')">Commencer la séance</button>
+<!-- ══ INTRO ══ -->
+<div class="screen active" id="intro">
+  <div class="intro-sigil">
+    <div class="sigil-ring"></div>
+    <div class="sigil-ring sigil-ring-2"></div>
+    <div class="sigil-core">🌿</div>
   </div>
+  <p class="intro-eyebrow">Parcours thérapeutique de</p>
+  <h1 class="intro-title">Marion<br><span>La Quête du Calme</span></h1>
+  <p class="intro-sub">Un voyage par niveaux pour apprivoiser la peur d'avoir peur — et retrouver la confiance en votre corps.</p>
+  <div class="xp-bar-container" style="max-width:360px">
+    <div class="xp-label">
+      <span class="xp-label-text">⚡ Points d'expérience</span>
+      <span class="xp-count" id="intro-xp-text">0 XP</span>
+    </div>
+    <div class="xp-track"><div class="xp-fill" id="intro-xp-bar" style="width:0%"></div></div>
+  </div>
+  <div class="level-badge"><div class="level-dot"></div><span id="intro-level-text">Niveau 1 — L'Éveil</span></div>
+  <br>
+  <button class="btn-quest" onclick="nav('map')">⚔️ &nbsp;Commencer la quête</button>
 </div>
 
-<!-- ============ MENU ============ -->
-<div class="screen" id="menu">
-  <div class="menu-hero">
-    <p class="menu-hero-greeting">Bonne séance,</p>
-    <h1 class="menu-hero-name"><em>Marion</em> 🌿</h1>
-    <p class="menu-hero-sub">Comment puis-je vous aider aujourd'hui ?</p>
+<!-- ══ MAP ══ -->
+<div class="screen" id="map">
+  <div class="map-header">
+    <div class="map-header-title">🗺️ Carte du monde</div>
+    <div class="map-header-xp">
+      <span id="map-xp-label">0 XP</span>
+      <div class="map-xp-mini"><div class="map-xp-mini-fill" id="map-xp-fill" style="width:0%"></div></div>
+    </div>
   </div>
-
-  <div class="menu-body">
-    <p class="section-label">Thérapies</p>
-    <div class="menu-grid">
-      <div class="menu-card" onclick="showScreen('tcc-module')">
-        <div class="menu-card-icon">🧠</div>
-        <div class="menu-card-title">TCC</div>
-        <div class="menu-card-desc">Comprendre et modifier mes pensées</div>
-      </div>
-      <div class="menu-card" onclick="showScreen('anxiety-screen')">
-        <div class="menu-card-icon">💙</div>
-        <div class="menu-card-title">Anxiété maladie</div>
-        <div class="menu-card-desc">Briser le cercle vicieux</div>
-      </div>
+  <div class="map-scroll">
+    <div class="stat-strip">
+      <div class="stat-item"><div class="stat-val" id="stat-levels">0</div><div class="stat-lbl">Niveaux</div></div>
+      <div class="stat-item"><div class="stat-val" id="stat-xp">0</div><div class="stat-lbl">XP total</div></div>
+      <div class="stat-item"><div class="stat-val">🔥 <span id="stat-streak">1</span></div><div class="stat-lbl">Série</div></div>
     </div>
 
-    <p class="section-label">Autohypnose</p>
-    <div class="menu-grid">
-      <div class="menu-card full-width" onclick="showScreen('hypnose-screen')">
-        <div class="menu-card-icon">🎧</div>
-        <div class="menu-card-title">Séances guidées</div>
-        <div class="menu-card-desc">Inductions, relaxation, ancrage — des séances complètes avec induction au début</div>
+    <p class="map-world-title">⚔️ Monde I — Comprendre la Peur</p>
+
+    <div class="level-card" id="lcard-0" onclick="startLevel(0)">
+      <div class="level-card-top">
+        <div class="level-icon green">🧠</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 1</div>
+          <div class="level-name">La Peur d'avoir Peur</div>
+          <div class="level-desc">Comprendre pourquoi votre cerveau sonne l'alarme même sans danger réel.</div>
+        </div>
+        <span class="check-icon" id="check-0" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-0" style="display:none">🔒</span>
       </div>
+      <div class="level-footer"><span class="tag green">🎯 TCC</span><span class="tag">5 étapes</span><span class="tag gold">+80 XP</span></div>
     </div>
 
-    <p class="section-label">Quotidien</p>
-    <div class="menu-grid">
-      <div class="menu-card" onclick="showScreen('journal-screen')">
-        <div class="menu-card-icon">📓</div>
-        <div class="menu-card-title">Journal</div>
-        <div class="menu-card-desc">Mes émotions du jour</div>
+    <div class="level-card locked" id="lcard-1" onclick="startLevel(1)">
+      <div class="level-card-top">
+        <div class="level-icon blue">🫁</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 2</div>
+          <div class="level-name">Votre Corps n'est pas l'Ennemi</div>
+          <div class="level-desc">Le SCI et l'anxiété : comprendre l'axe intestin-cerveau sans paniquer.</div>
+        </div>
+        <span class="check-icon" id="check-1" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-1">🔒</span>
       </div>
-      <div class="menu-card" onclick="showScreen('tools-screen')">
-        <div class="menu-card-icon">🛠️</div>
-        <div class="menu-card-title">Outils</div>
-        <div class="menu-card-desc">Respirations & techniques</div>
+      <div class="level-footer"><span class="tag blue">🫁 SCI</span><span class="tag">6 étapes</span><span class="tag gold">+100 XP</span></div>
+    </div>
+
+    <div class="level-card locked" id="lcard-2" onclick="startLevel(2)">
+      <div class="level-card-top">
+        <div class="level-icon gold">🌀</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 3</div>
+          <div class="level-name">Le Cercle Vicieux</div>
+          <div class="level-desc">Cartographier votre cycle anxieux et identifier vos déclencheurs personnels.</div>
+        </div>
+        <span class="check-icon" id="check-2" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-2">🔒</span>
+      </div>
+      <div class="level-footer"><span class="tag">🗺️ Cartographie</span><span class="tag">5 étapes</span><span class="tag gold">+90 XP</span></div>
+    </div>
+
+    <p class="map-world-title">🌊 Monde II — Les Outils du Guerrier</p>
+
+    <div class="level-card locked" id="lcard-3" onclick="startLevel(3)">
+      <div class="level-card-top">
+        <div class="level-icon green">🌬️</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 4</div>
+          <div class="level-name">Souffle & Cohérence</div>
+          <div class="level-desc">Maîtriser la respiration 4-4-6 pour calmer le système nerveux en 90 secondes.</div>
+        </div>
+        <span class="check-icon" id="check-3" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-3">🔒</span>
+      </div>
+      <div class="level-footer"><span class="tag green">🌬️ Respiration</span><span class="tag">5 étapes</span><span class="tag gold">+80 XP</span></div>
+    </div>
+
+    <div class="level-card locked" id="lcard-4" onclick="startLevel(4)">
+      <div class="level-card-top">
+        <div class="level-icon purple">🎧</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 5</div>
+          <div class="level-name">Le Sanctuaire Intérieur</div>
+          <div class="level-desc">Première séance d'autohypnose — induction et création de votre lieu sûr.</div>
+        </div>
+        <span class="check-icon" id="check-4" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-4">🔒</span>
+      </div>
+      <div class="level-footer"><span class="tag">🎧 Hypnose</span><span class="tag">4 étapes</span><span class="tag gold">+120 XP</span></div>
+    </div>
+
+    <div class="level-card locked" id="lcard-5" onclick="startLevel(5)">
+      <div class="level-card-top">
+        <div class="level-icon gold">⚡</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 6</div>
+          <div class="level-name">Restructurer les Pensées</div>
+          <div class="level-desc">Transformer les pensées catastrophiques en pensées ancrées dans la réalité.</div>
+        </div>
+        <span class="check-icon" id="check-5" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-5">🔒</span>
+      </div>
+      <div class="level-footer"><span class="tag gold">💭 TCC avancé</span><span class="tag">6 étapes</span><span class="tag gold">+110 XP</span></div>
+    </div>
+
+    <p class="map-world-title">🔥 Monde III — Affronter & Vaincre</p>
+
+    <div class="level-card locked" id="lcard-6" onclick="startLevel(6)">
+      <div class="level-card-top">
+        <div class="level-icon red">🚶</div>
+        <div class="level-info">
+          <div class="level-num">Niveau 7</div>
+          <div class="level-name">L'Exposition Graduée</div>
+          <div class="level-desc">Affronter les situations redoutées, pas à pas, sans fuir.</div>
+        </div>
+        <span class="check-icon" id="check-6" style="display:none">✅</span>
+        <span class="lock-icon" id="lock-6">🔒</span>
+      </div>
+      <div class="level-footer"><span class="tag">🎯 Exposition</span><span class="tag">5 étapes</span><span class="tag gold">+130 XP</span></div>
+    </div>
+
+    <div class="boss-card" id="lcard-7" onclick="startLevel(7)">
+      <div class="boss-badge">💀 Niveau Final</div>
+      <div class="level-card-top" style="margin-bottom:12px">
+        <div class="level-icon red" style="font-size:28px">🐉</div>
+        <div class="level-info">
+          <div class="boss-name">Vaincre la Peur de la Peur</div>
+          <div class="boss-desc">Le combat final : intégrer toutes les compétences et créer votre plan de vie.</div>
+        </div>
+        <span class="lock-icon" id="lock-7">🔒</span>
+        <span class="check-icon" id="check-7" style="display:none">✅</span>
+      </div>
+      <div class="level-footer">
+        <span class="tag" style="border-color:rgba(224,92,92,0.3);color:var(--red);">👑 Boss Final</span>
+        <span class="tag gold">+200 XP</span>
       </div>
     </div>
   </div>
 
   <nav class="bottom-nav">
-    <div class="nav-item active" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
+    <div class="nav-it active" onclick="nav('map')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+      Carte
     </div>
-    <div class="nav-item" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
+    <div class="nav-it" onclick="nav('journal-sc')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
       Journal
+    </div>
+    <div class="nav-it" onclick="nav('audio-sc')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+      Hypnose
     </div>
   </nav>
 </div>
 
-<!-- ============ TCC MODULE ============ -->
-<div class="screen" id="tcc-module">
-  <div class="app-header">
-    <div class="header-back" onclick="showScreen('menu')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Retour
+<!-- ══ PLAY ══ -->
+<div class="screen" id="play">
+  <div class="play-header">
+    <div class="back-btn" onclick="nav('map')">←</div>
+    <div class="play-header-info">
+      <div class="play-level-num" id="play-level-num">Niveau 1</div>
+      <div class="play-level-name" id="play-level-name">—</div>
     </div>
-    <div class="header-logo">Thérapie Cognitive</div>
-    <div style="width:60px"></div>
+    <div class="play-xp">⚡ <span id="play-xp-reward">+80 XP</span></div>
   </div>
+  <div class="step-progress"><div class="step-dots" id="step-dots"></div></div>
+  <div class="play-body" id="play-body"></div>
+  <div style="position:fixed;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,var(--bg) 40%);z-index:40;">
+    <button class="btn-quest" id="next-btn" style="width:100%;text-align:center;" onclick="nextStep()">Continuer →</button>
+  </div>
+</div>
 
-  <div class="module-body">
-    <div class="intro-card">
-      <h2>Thérapie Cognitive Comportementale</h2>
-      <p>Développée dans les années 1960 par le psychiatre Aaron Beck, la TCC vise à changer les processus de pensée négatifs et les convictions ayant abouti au comportement problématique. Elle aide à identifier et modifier les pensées automatiques, les émotions et les comportements.</p>
-    </div>
+<!-- ══ REWARD ══ -->
+<div class="screen" id="reward">
+  <div class="reward-burst" id="reward-emoji">🏆</div>
+  <div class="reward-title" id="reward-title">Niveau accompli !</div>
+  <div class="reward-sub" id="reward-sub">Vous avancez sur votre chemin.</div>
+  <div class="reward-xp-gain" id="reward-xp">⚡ +80 XP</div>
+  <div class="reward-unlock" id="reward-unlock">
+    <div class="reward-unlock-label">🔓 Débloqué</div>
+    <div class="reward-unlock-text" id="reward-unlock-text">Niveau suivant disponible !</div>
+  </div>
+  <button class="btn-quest" onclick="nav('map')">Retour à la carte →</button>
+</div>
 
-    <p class="section-label">Les 4 phases de votre suivi</p>
-
-    <div class="phase-list">
-      <div class="phase-card" onclick="showPhaseDetail(1)">
-        <div class="phase-number">1</div>
-        <div class="phase-content">
-          <h3>Connaître et établir la confiance</h3>
-          <p>Comprendre le cycle de pensées-sentiments-conduites. Expliquer la démarche thérapeutique.</p>
-          <span class="badge">🏁 Début</span>
-        </div>
-      </div>
-
-      <div class="phase-card" onclick="showPhaseDetail(2)">
-        <div class="phase-number">2</div>
-        <div class="phase-content">
-          <h3>Briser le cycle</h3>
-          <p>Explorer les pensées et comportements problématiques. Analyser leur effet sur soi et les autres.</p>
-          <span class="badge">🔍 Exploration</span>
-        </div>
-      </div>
-
-      <div class="phase-card" onclick="showPhaseDetail(3)">
-        <div class="phase-number">3</div>
-        <div class="phase-content">
-          <h3>Utiliser des outils</h3>
-          <p>Techniques de relaxation, thérapie d'exposition, résoudre les problèmes avec le thérapeute.</p>
-          <span class="badge">🛠️ Pratique</span>
-        </div>
-      </div>
-
-      <div class="phase-card" onclick="showPhaseDetail(4)">
-        <div class="phase-number">4</div>
-        <div class="phase-content">
-          <h3>Ancrer les nouvelles habitudes</h3>
-          <p>Surveiller les activités bénéfiques. Encourager à pratiquer les techniques après la thérapie.</p>
-          <span class="badge">✨ Consolidation</span>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top: 28px;">
-      <p class="section-label">Ce que la TCC traite</p>
-      <div class="tip-cards">
-        <div class="tip-card">
-          <h4>🔄 Le cycle pensées-émotions-comportements</h4>
-          <p>Les sentiments créent un comportement indésirable, qui renforce lui-même les pensées négatives. La TCC aide à briser ce cercle.</p>
-        </div>
-        <div class="tip-card">
-          <h4>📋 Un journal de pensées</h4>
-          <p>Notez vos pensées automatiques négatives. Évaluez si elles sont irrationnelles et remplacez-les par des alternatives plus saines.</p>
-        </div>
-        <div class="tip-card">
-          <h4>🎯 Convictions sous-jacentes</h4>
-          <p>La thérapie aide à modifier les convictions profondes qui alimentent les comportements problématiques.</p>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top: 28px; text-align: center;">
-      <button class="btn-primary" onclick="showScreen('tools-screen')">
-        Accéder aux exercices pratiques →
-      </button>
+<!-- ══ JOURNAL ══ -->
+<div class="screen" id="journal-sc">
+  <div class="play-header">
+    <div class="back-btn" onclick="nav('map')">←</div>
+    <div class="play-header-info">
+      <div class="play-level-num">Journal de quête</div>
+      <div class="play-level-name">Mes émotions & pensées</div>
     </div>
   </div>
-
+  <div class="play-body" style="padding-bottom:100px">
+    <div class="step-card">
+      <div class="step-emoji">📓</div>
+      <div class="step-title">Comment je me sens ?</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'😌')"><div style="font-size:26px">😌</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Sereine</div></div>
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'😰')"><div style="font-size:26px">😰</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Anxieuse</div></div>
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'🤢')"><div style="font-size:26px">🤢</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Inconfort</div></div>
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'😔')"><div style="font-size:26px">😔</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Triste</div></div>
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'💪')"><div style="font-size:26px">💪</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Courageuse</div></div>
+        <div class="choice-btn" style="text-align:center;padding:14px 8px;" onclick="pickEmotion(this,'😴')"><div style="font-size:26px">😴</div><div style="font-size:11px;margin-top:4px;color:var(--text-soft)">Fatiguée</div></div>
+      </div>
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:8px;">Qu'est-ce que je remarque en moi aujourd'hui ?</p>
+      <textarea class="reflection-input" id="journal-ta" placeholder="Pensées, sensations corporelles, ce qui m'a déclenché..."></textarea>
+      <button class="btn-quest" style="width:100%;margin-top:14px;" onclick="saveJournal()">Enregistrer ✓</button>
+    </div>
+    <div id="journal-entries" style="margin-top:20px;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
   <nav class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
-    </div>
-    <div class="nav-item active" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
-      Journal
-    </div>
+    <div class="nav-it" onclick="nav('map')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>Carte</div>
+    <div class="nav-it active" onclick="nav('journal-sc')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Journal</div>
+    <div class="nav-it" onclick="nav('audio-sc')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>Hypnose</div>
   </nav>
 </div>
 
-<!-- ============ AUTOHYPNOSE ============ -->
-<div class="screen" id="hypnose-screen">
-  <div class="audio-hero">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="header-back" style="color:rgba(255,255,255,0.7); margin-bottom:20px;" onclick="showScreen('menu')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Retour
-    </div>
-    <h1>Autohypnose 🎧</h1>
-    <p>Chaque séance commence par une induction douce</p>
-  </div>
-
-  <div class="audio-list">
-    <p style="font-size:12px; color:var(--text-soft); text-align:center; padding: 4px 0 8px;">
-      ⚠️ Placez les fichiers audio dans le dossier <code>audio/</code> au même niveau que index.html
-    </p>
-
-    <!-- SÉANCE 1 -->
-    <div class="audio-card" onclick="openPlayer('Relaxation & Lâcher-prise', 'Induction progressive + détente complète', 'audio/seance-relaxation.mp3', '~20 min')">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="audio-info">
-        <div class="audio-title">Relaxation & Lâcher-prise</div>
-        <div class="audio-desc">Induction progressive → corps et esprit apaisés</div>
-        <div class="audio-duration">🕐 ~20 min</div>
-      </div>
-    </div>
-
-    <!-- SÉANCE 2 -->
-    <div class="audio-card" onclick="openPlayer('Confiance en soi', 'Induction + ancrage de confiance', 'audio/seance-confiance.mp3', '~15 min')">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="audio-info">
-        <div class="audio-title">Confiance en soi</div>
-        <div class="audio-desc">Induction + renforcement de la confiance intérieure</div>
-        <div class="audio-duration">🕐 ~15 min</div>
-      </div>
-    </div>
-
-    <!-- SÉANCE 3 -->
-    <div class="audio-card" onclick="openPlayer('Gestion de l\'anxiété', 'Induction + ancrage de sécurité', 'audio/seance-anxiete.mp3', '~18 min')">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="audio-info">
-        <div class="audio-title">Gestion de l'anxiété</div>
-        <div class="audio-desc">Induction + lieu sûr intérieur → apaiser l'anxiété</div>
-        <div class="audio-duration">🕐 ~18 min</div>
-      </div>
-    </div>
-
-    <!-- SÉANCE 4 -->
-    <div class="audio-card" onclick="openPlayer('Sommeil profond', 'Induction douce pour le soir', 'audio/seance-sommeil.mp3', '~25 min')">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="audio-info">
-        <div class="audio-title">Sommeil profond</div>
-        <div class="audio-desc">Induction douce → endormissement naturel</div>
-        <div class="audio-duration">🕐 ~25 min</div>
-      </div>
-    </div>
-
-    <!-- SÉANCE 5 -->
-    <div class="audio-card" onclick="openPlayer('Ancrage & Sécurité', 'Induction + ancrage physique', 'audio/seance-ancrage.mp3', '~12 min')">
-      <div class="play-btn">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </div>
-      <div class="audio-info">
-        <div class="audio-title">Ancrage & Sécurité</div>
-        <div class="audio-desc">Induction + techniques d'ancrage pour les moments difficiles</div>
-        <div class="audio-duration">🕐 ~12 min</div>
-      </div>
-    </div>
-
-    <div style="background: var(--warm-light); border-radius: 16px; padding: 16px 18px; margin-top: 8px;">
-      <p style="font-size: 13px; color: var(--text-soft); line-height: 1.6;">
-        <strong style="color: var(--text);">Structure de chaque séance :</strong><br>
-        🌬️ Induction (relaxation progressive) → 🌊 Approfondissement → 🎯 Travail ciblé → 🌅 Réveil en douceur
-      </p>
+<!-- ══ AUDIO ══ -->
+<div class="screen" id="audio-sc">
+  <div class="play-header">
+    <div class="back-btn" onclick="nav('map')">←</div>
+    <div class="play-header-info">
+      <div class="play-level-num">Séances d'autohypnose</div>
+      <div class="play-level-name">Induction + travail ciblé</div>
     </div>
   </div>
-
+  <div class="play-body" style="padding-bottom:100px">
+    <div style="background:rgba(76,175,130,0.05);border:1px solid rgba(76,175,130,0.15);border-radius:14px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--text-soft);line-height:1.6;">
+      🌀 Chaque séance commence par une <strong style="color:var(--text)">induction progressive</strong>. Placez vos fichiers dans le dossier <code>audio/</code>.
+    </div>
+    <div class="audio-play-card" onclick="openAudio('Relaxation','Induction progressive, détente complète','audio/seance-relaxation.mp3','~20 min')">
+      <div class="audio-play-btn">▶</div>
+      <div class="audio-play-info"><div class="audio-play-title">Relaxation & Lâcher-prise</div><div class="audio-play-sub">Induction progressive → corps et esprit apaisés</div><div class="audio-play-duration">🕐 ~20 min</div></div>
+    </div>
+    <div class="audio-play-card" onclick="openAudio('Apprivoiser l\'Anxiété','Induction, sécurité intérieure','audio/seance-anxiete.mp3','~18 min')">
+      <div class="audio-play-btn">▶</div>
+      <div class="audio-play-info"><div class="audio-play-title">Apprivoiser l'Anxiété</div><div class="audio-play-sub">Induction → lieu sûr, dissoudre la peur de la peur</div><div class="audio-play-duration">🕐 ~18 min</div></div>
+    </div>
+    <div class="audio-play-card" onclick="openAudio('Paix Intestinale','Induction, dialogue avec votre intestin','audio/seance-sci.mp3','~22 min')">
+      <div class="audio-play-btn">▶</div>
+      <div class="audio-play-info"><div class="audio-play-title">Paix Intestinale ✨</div><div class="audio-play-sub">Induction → confiance en votre corps, SCI</div><div class="audio-play-duration">🕐 ~22 min</div></div>
+    </div>
+    <div class="audio-play-card" onclick="openAudio('Confiance en Soi','Induction, ancrage de confiance','audio/seance-confiance.mp3','~15 min')">
+      <div class="audio-play-btn">▶</div>
+      <div class="audio-play-info"><div class="audio-play-title">Confiance en Soi</div><div class="audio-play-sub">Induction → renforcement intérieur</div><div class="audio-play-duration">🕐 ~15 min</div></div>
+    </div>
+    <div class="audio-play-card" onclick="openAudio('Sommeil Profond','Induction douce pour le soir','audio/seance-sommeil.mp3','~25 min')">
+      <div class="audio-play-btn">▶</div>
+      <div class="audio-play-info"><div class="audio-play-title">Sommeil Profond</div><div class="audio-play-sub">Induction douce → endormissement naturel</div><div class="audio-play-duration">🕐 ~25 min</div></div>
+    </div>
+  </div>
   <nav class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
-    </div>
-    <div class="nav-item" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item active" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
-      Journal
-    </div>
+    <div class="nav-it" onclick="nav('map')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>Carte</div>
+    <div class="nav-it" onclick="nav('journal-sc')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>Journal</div>
+    <div class="nav-it active" onclick="nav('audio-sc')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>Hypnose</div>
   </nav>
 </div>
 
-<!-- ============ JOURNAL ============ -->
-<div class="screen" id="journal-screen">
-  <div class="app-header">
-    <div class="header-back" onclick="showScreen('menu')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Retour
-    </div>
-    <div class="header-logo">Mon Journal</div>
-    <div style="width:60px"></div>
-  </div>
-
-  <div class="journal-body">
-    <p class="section-label">Comment je me sens maintenant ?</p>
-
-    <div class="emotion-grid">
-      <div class="emotion-btn" onclick="selectEmotion(this, '😌')"><span class="emoji">😌</span><span class="label">Sereine</span></div>
-      <div class="emotion-btn" onclick="selectEmotion(this, '😰')"><span class="emoji">😰</span><span class="label">Anxieuse</span></div>
-      <div class="emotion-btn" onclick="selectEmotion(this, '😔')"><span class="emoji">😔</span><span class="label">Triste</span></div>
-      <div class="emotion-btn" onclick="selectEmotion(this, '😤')"><span class="emoji">😤</span><span class="label">Frustrée</span></div>
-      <div class="emotion-btn" onclick="selectEmotion(this, '😊')"><span class="emoji">😊</span><span class="label">Heureuse</span></div>
-      <div class="emotion-btn" onclick="selectEmotion(this, '😴')"><span class="emoji">😴</span><span class="label">Fatiguée</span></div>
-    </div>
-
-    <p class="section-label">Mes pensées du moment</p>
-    <textarea id="journal-text" placeholder="Qu'est-ce qui occupe mon esprit en ce moment ? Quelles pensées automatiques ai-je remarquées ?"></textarea>
-
-    <button class="save-entry-btn" onclick="saveEntry()">Enregistrer cette entrée ✓</button>
-
-    <div class="past-entries" id="past-entries">
-      <p class="section-label" style="margin-top: 24px;">Entrées précédentes</p>
-      <p style="font-size:13px; color:var(--text-soft); text-align:center; padding: 20px 0;">Vos entrées apparaîtront ici.</p>
-    </div>
-  </div>
-
-  <nav class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
-    </div>
-    <div class="nav-item" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item active" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
-      Journal
-    </div>
-  </nav>
-</div>
-
-<!-- ============ ANXIÉTÉ MALADIE ============ -->
-<div class="screen" id="anxiety-screen">
-  <div class="app-header">
-    <div class="header-back" onclick="showScreen('menu')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Retour
-    </div>
-    <div class="header-logo">Anxiété & Maladie</div>
-    <div style="width:60px"></div>
-  </div>
-
-  <div class="anxiety-body">
-    <div class="intro-card">
-      <h2>Comprendre le trouble anxieux envers la maladie</h2>
-      <p>Anciennement appelé « hypocondrie », ce trouble concerne l'inquiétude excessive à l'idée d'être gravement malade, même si des examens médicaux minutieux ne révèlent rien. L'évaluation et le traitement tentent de stopper les comportements d'évitement et de réconfort.</p>
-    </div>
-
-    <p class="section-label">Le cercle vicieux</p>
-
-    <div class="cycle-visual">
-      <div class="cycle-steps">
-        <div class="cycle-step">
-          <div class="step-icon">💡</div>
-          <div class="step-text">
-            <strong>Déclencheur</strong>
-            Sensation physique (ex : douleur à l'estomac)
-          </div>
-        </div>
-        <div class="cycle-step">
-          <div class="step-icon">😨</div>
-          <div class="step-text">
-            <strong>Pensée catastrophique</strong>
-            « C'est peut-être un cancer »
-          </div>
-        </div>
-        <div class="cycle-step">
-          <div class="step-icon">🔍</div>
-          <div class="step-text">
-            <strong>Recherche & vérification</strong>
-            Consulter internet, examens fréquents du corps
-          </div>
-        </div>
-        <div class="cycle-step">
-          <div class="step-icon">😮‍💨</div>
-          <div class="step-text">
-            <strong>Soulagement temporaire</strong>
-            Réconfort de la famille ou du médecin
-          </div>
-        </div>
-        <div class="cycle-step">
-          <div class="step-icon">🔄</div>
-          <div class="step-text">
-            <strong>Retour de l'anxiété</strong>
-            Le cycle recommence...
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p class="section-label">Stratégies pour briser le cycle</p>
-
-    <div class="tip-cards">
-      <div class="tip-card">
-        <h4>🧘 Pleine conscience (Mindfulness)</h4>
-        <p>Observer les sensations corporelles sans les juger. S'intéresser moins aux sensations et réévaluer ses convictions sur la maladie.</p>
-      </div>
-      <div class="tip-card">
-        <h4>🚫 Réduire les comportements de réassurance</h4>
-        <p>Éviter de consulter internet ou de demander confirmation. Accroître la tolérance à l'incertitude progressivement.</p>
-      </div>
-      <div class="tip-card">
-        <h4>💭 Restructuration cognitive</h4>
-        <p>Questionner les pensées catastrophiques. Quelle est la probabilité réelle ? Y a-t-il d'autres explications possibles ?</p>
-      </div>
-      <div class="tip-card">
-        <h4>🤝 Traitement combiné</h4>
-        <p>Les thérapies comportementales associées aux antidépresseurs montrent de bons résultats. En parler avec votre thérapeute.</p>
-      </div>
-    </div>
-
-    <div style="margin-top: 24px; text-align: center;">
-      <button class="btn-primary" onclick="showScreen('tools-screen')">
-        Exercice de respiration →
-      </button>
-    </div>
-  </div>
-
-  <nav class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
-    </div>
-    <div class="nav-item" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
-      Journal
-    </div>
-  </nav>
-</div>
-
-<!-- ============ OUTILS ============ -->
-<div class="screen" id="tools-screen">
-  <div class="app-header">
-    <div class="header-back" onclick="showScreen('menu')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Retour
-    </div>
-    <div class="header-logo">Outils & Techniques</div>
-    <div style="width:60px"></div>
-  </div>
-
-  <div class="tools-body">
-    <!-- RESPIRATION -->
-    <div class="breathing-exercise">
-      <p class="section-label" style="text-align:center; margin-top:0;">Cohérence cardiaque 4-4-6</p>
-      <div class="breath-circle" id="breathCircle">Appuyez<br>pour démarrer</div>
-      <p class="breath-label" id="breathLabel">Inspirez 4 sec → Retenez 4 sec → Expirez 6 sec</p>
-      <button class="breath-start" id="breathBtn" onclick="startBreathing()">▶ Démarrer</button>
-    </div>
-
-    <p class="section-label">Techniques thérapeutiques</p>
-
-    <div class="tool-card" onclick="showToast('Technique ajoutée à votre prochain rendez-vous 📌')">
-      <div class="tool-card-header">
-        <div class="tool-icon">🧩</div>
-        <h3>Restructuration cognitive</h3>
-      </div>
-      <p>Identifiez une pensée automatique négative. Évaluez son degré de vérité (0-10). Trouvez 3 arguments contre. Reformulez en pensée plus équilibrée.</p>
-    </div>
-
-    <div class="tool-card" onclick="showToast('Technique ajoutée à votre prochain rendez-vous 📌')">
-      <div class="tool-card-header">
-        <div class="tool-icon">🌊</div>
-        <h3>Exposition graduée</h3>
-      </div>
-      <p>Commencez par exposer à la situation la moins anxiogène. Restez dans la situation jusqu'à ce que l'anxiété diminue de moitié. Progressez vers des situations plus difficiles.</p>
-    </div>
-
-    <div class="tool-card" onclick="showToast('Technique ajoutée à votre prochain rendez-vous 📌')">
-      <div class="tool-card-header">
-        <div class="tool-icon">🎯</div>
-        <h3>Ancrage 5-4-3-2-1</h3>
-      </div>
-      <p>Nommez 5 choses que vous voyez → 4 que vous touchez → 3 que vous entendez → 2 que vous sentez → 1 que vous goûtez. Ramène au moment présent instantanément.</p>
-    </div>
-
-    <div class="tool-card" onclick="showToast('Technique ajoutée à votre prochain rendez-vous 📌')">
-      <div class="tool-card-header">
-        <div class="tool-icon">📋</div>
-        <h3>Journal de pensées TCC</h3>
-      </div>
-      <p>Situation → Pensée automatique → Émotion (intensité/10) → Pensée alternative → Résultat. À compléter dans le journal quotidiennement.</p>
-      <button class="btn-secondary" style="margin-top:12px; width:100%;" onclick="event.stopPropagation(); showScreen('journal-screen')">Ouvrir le journal →</button>
-    </div>
-  </div>
-
-  <nav class="bottom-nav">
-    <div class="nav-item" onclick="showScreen('menu')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      Accueil
-    </div>
-    <div class="nav-item" onclick="showScreen('tcc-module')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-      TCC
-    </div>
-    <div class="nav-item" onclick="showScreen('hypnose-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7 7 0 0 1-7 7zm0-11a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm0 6a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
-      Hypnose
-    </div>
-    <div class="nav-item" onclick="showScreen('journal-screen')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
-      Journal
-    </div>
-  </nav>
-</div>
-
-<!-- ============ AUDIO PLAYER OVERLAY ============ -->
-<div class="player-overlay" id="playerOverlay">
+<!-- AUDIO PLAYER OVERLAY -->
+<div class="player-overlay" id="po">
   <div class="player-sheet">
-    <div class="player-handle" onclick="closePlayer()"></div>
-    <div class="player-track" id="playerTitle">—</div>
-    <div class="player-sub" id="playerSub">—</div>
-
-    <div class="player-visual" id="playerVisual">
-      <!-- wave bars injected by JS -->
-    </div>
-
-    <div class="player-progress" onclick="seekAudio(event)">
-      <div class="player-progress-fill" id="progressFill"></div>
-    </div>
-    <div class="player-times">
-      <span id="currentTime">0:00</span>
-      <span id="totalTime">—</span>
-    </div>
-
+    <div class="player-handle" onclick="closeAudio()"></div>
+    <div class="player-track" id="pt"></div>
+    <div class="player-sub" id="ps"></div>
+    <div class="player-waves" id="pw"></div>
+    <div class="player-progress" onclick="seekAudio(event)"><div class="player-progress-fill" id="pf"></div></div>
+    <div class="player-times"><span id="pct">0:00</span><span id="ptt">—</span></div>
     <div class="player-controls">
-      <button class="ctrl-btn" onclick="skipAudio(-15)">
-        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="7" y="15" font-size="5" fill="white">-15</text></svg>
-      </button>
-      <button class="ctrl-btn ctrl-play" id="playPauseBtn" onclick="togglePlay()">
-        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <button class="ctrl-btn" onclick="skipAudio(15)">
-        <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/></svg>
-      </button>
+      <button class="ctrl" onclick="skipA(-15)">⏮ 15s</button>
+      <button class="ctrl-main" id="pmb" onclick="toggleAudio()">▶</button>
+      <button class="ctrl" onclick="skipA(15)">15s ⏭</button>
     </div>
-
-    <div class="player-note">
-      🌀 Trouvez un endroit confortable. Fermez les yeux et laissez la voix vous guider dans votre induction.
+    <div style="margin-top:20px;padding:12px 14px;background:rgba(76,175,130,0.05);border-radius:10px;font-size:12px;color:var(--text-soft);text-align:center;line-height:1.5;">
+      🌀 Installez-vous confortablement. Fermez les yeux. Laissez la voix vous guider dans l'induction.
     </div>
   </div>
 </div>
 
 <script>
-  // ── SCREEN NAVIGATION ──
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo(0, 0);
-  }
+// STATE
+const S = JSON.parse(localStorage.getItem('marion-quest2') || '{}');
+if (!S.xp) S.xp = 0;
+if (!S.completed) S.completed = [];
+if (!S.journal) S.journal = [];
+function save() { localStorage.setItem('marion-quest2', JSON.stringify(S)); }
 
-  // ── TOAST ──
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
+const LEVEL_XP   = [80,100,90,80,120,110,130,200];
+const LEVEL_MSGS = [
+  'Le Niveau 2 est maintenant disponible !',
+  'Le Niveau 3 est maintenant disponible !',
+  'Le Monde II s\'ouvre — Niveau 4 vous attend !',
+  'Le Niveau 5 est disponible !',
+  'Le Niveau 6 est disponible !',
+  'Le Monde III s\'ouvre — Niveau 7 vous attend !',
+  'Le Niveau Final est débloqué. Êtes-vous prête ?',
+  '🎉 Quête accomplie ! Marion, vous avez vaincu la peur de la peur.',
+];
+const LEVEL_EMOJIS = ['🧠','🫁','🌀','🌬️','🎧','⚡','🚶','👑'];
 
-  // ── AUDIO PLAYER ──
-  let currentAudio = null;
-  let isPlaying = false;
+// LEVELS
+const LEVELS = [
+  { name:'La Peur d\'avoir Peur', xp:80, steps:[
+    {type:'read',emoji:'😱',title:'Qu\'est-ce que la peur d\'avoir peur ?',body:`<p>Marion, imaginez deux alarmes incendie : l'une se déclenche quand il y a vraiment du feu. <strong>L'autre se déclenche… parce qu'elle a peur de se déclencher.</strong></p><p>C'est exactement ce qui se passe dans le trouble anxieux : votre cerveau a appris à avoir peur des <em>symptômes de la peur elle-même</em> — les palpitations, les crampes, la nausée…</p><span class="highlight">🔑 Le nom officiel : « anxiété intéroceptive ». Ce n'est pas de la faiblesse — c'est un mécanisme d'apprentissage que votre cerveau peut désapprendre.</span>`},
+    {type:'quiz',emoji:'🧠',title:'Quiz — Connaissez-vous votre alarme ?',question:'Que se passe-t-il dans le cercle de la peur d\'avoir peur ?',choices:[{text:'La peur d\'un danger extérieur réel',correct:false},{text:'La peur des symptômes de la peur eux-mêmes',correct:true},{text:'Une réaction allergique',correct:false}],explanation:'Exact ! La peur d\'avoir peur, c\'est quand le cerveau sonne l\'alarme en voyant les signaux de l\'alarme elle-même.'},
+    {type:'read',emoji:'🧬',title:'Pourquoi votre corps réagit-il ainsi ?',body:`<p>Votre <strong>amygdale</strong> — le détecteur de danger du cerveau — a mémorisé que certaines sensations physiques (crampes, nausées) sont associées à un danger.</p><p>Dès qu'elle les détecte, elle déclenche la réponse de stress : adrénaline, cortisol… ce qui <em>amplifie</em> exactement ces sensations.</p><span class="danger">⚠️ Ce mécanisme cherche à vous protéger — mais il surévalue la menace.</span><span class="highlight">✅ Ce que le cerveau apprend, il peut le désapprendre. C'est l'objectif de cette quête.</span>`},
+    {type:'reflection',emoji:'📝',title:'Votre alarme à vous',prompt:'Quelles sensations déclenchent généralement votre anxiété ? (crampes, douleurs abdominales, nausées, palpitations…)'},
+    {type:'read',emoji:'🌱',title:'La première vérité libératrice',body:`<span class="highlight">💚 Ressentir de l'anxiété ne signifie PAS qu'il y a un danger réel. C'est votre système d'alarme qui se trompe de cible.</span><p>Les symptômes physiques que vous ressentez ne sont pas une menace. Ils sont inconfortables — mais ils ne sont pas dangereux.</p><p>Dans les prochains niveaux, vous allez apprendre à <strong>recalibrer cette alarme</strong>, un outil à la fois.</p>`},
+  ]},
+  { name:'Votre Corps n\'est pas l\'Ennemi', xp:100, steps:[
+    {type:'read',emoji:'🫁',title:'Le SCI & l\'anxiété',body:`<p>Marion, votre côlon irritable et votre anxiété parlent le même langage.</p><p>L'intestin possède <strong>plus de 100 millions de neurones</strong>. On l'appelle le « deuxième cerveau ». Il communique constamment avec le cerveau via le nerf vague.</p><span class="highlight">🔗 Axe intestin-cerveau : quand le cerveau est stressé, l'intestin se contracte. Quand l'intestin est douloureux, le cerveau s'affole. C'est bidirectionnel.</span>`},
+    {type:'quiz',emoji:'🧠',title:'Quiz — L\'axe intestin-cerveau',question:'Pourquoi l\'anxiété aggrave-t-elle le SCI ?',choices:[{text:'Parce que l\'anxiété affaiblit le système immunitaire',correct:false},{text:'Parce que le stress active le système nerveux et perturbe les contractions intestinales',correct:true},{text:'Parce que l\'anxiété change directement la flore',correct:false}],explanation:'Exact ! Le système nerveux autonome contrôle les mouvements intestinaux. Sous stress, il dérègle le transit.'},
+    {type:'read',emoji:'💛',title:'Le piège de la surveillance corporelle',body:`<p>Quand on a le SCI, on apprend à <em>surveiller en permanence</em> son ventre. On scrute chaque sensation. On anticipe la prochaine crise.</p><span class="danger">⚠️ Ce comportement de surveillance amplifie les sensations. Attention portée = signal amplifié. C'est comme tourner le volume de la radio.</span><span class="highlight">💡 Briser ce cycle, c'est apprendre à baisser le volume — pas à supprimer les sensations, mais à leur donner moins d'importance.</span>`},
+    {type:'read',emoji:'🤝',title:'Réconciliation avec votre corps',body:`<p>Votre corps n'est pas votre ennemi. Il fait de son mieux avec un système nerveux hypersensible.</p><span class="highlight">✨ Exercice : posez votre main sur votre ventre. Respirez. Dites intérieurement : "Je ne suis pas en guerre avec toi. Je t'écoute autrement."</span>`},
+    {type:'reflection',emoji:'📝',title:'Votre relation à votre corps',prompt:'Comment décririez-vous votre relation à votre corps en ce moment ? Qu\'aimeriez-vous qu\'elle devienne ?'},
+    {type:'read',emoji:'🌟',title:'Ce que la science dit',body:`<p>Les études montrent que la <strong>TCC</strong> réduit significativement les symptômes du SCI — parfois autant que les médicaments.</p><p>L'<strong>autohypnose intestinale</strong> est parmi les traitements les plus efficaces avec 80% d'amélioration dans certaines études.</p><span class="highlight">🎯 Ce n'est pas "dans votre tête" — c'est dans votre système nerveux. Et le système nerveux, ça s'entraîne.</span>`},
+  ]},
+  { name:'Le Cercle Vicieux', xp:90, steps:[
+    {type:'read',emoji:'🌀',title:'Cartographier votre cycle',body:`<p>Chaque personne anxieuse a son propre cycle. Mais tous partagent la même structure :</p><span class="highlight">🔵 Déclencheur → 🔴 Pensée catastrophique → 😰 Anxiété → 🤢 Symptômes physiques → 🔵 Déclencheur amplifié…</span><p>Pour Marion, le cycle ressemble souvent à :</p><span class="danger">Crampe intestinale → "Et si c'est grave ?" → Anxiété monte → Ventre se contracte → Crampes s'intensifient → "Je savais que c'était grave !"</span>`},
+    {type:'quiz',emoji:'🧠',title:'Identifier le déclencheur',question:'Dans un cycle anxieux lié au SCI, quel est souvent le premier maillon ?',choices:[{text:'Une pensée catastrophique spontanée',correct:false},{text:'Une sensation physique (crampe, douleur, urgence)',correct:true},{text:'Un événement extérieur stressant',correct:false}],explanation:'Souvent oui ! Une sensation intestinale déclenche une interprétation catastrophique qui génère de l\'anxiété, qui aggrave les symptômes.'},
+    {type:'read',emoji:'🔍',title:'Les comportements qui maintiennent le cycle',body:`<span class="danger">❌ Éviter certains aliments par peur → Confirme que c'est dangereux<br>❌ Rester proche des toilettes "au cas où" → Renforce la croyance que la catastrophe peut arriver<br>❌ Chercher des causes médicales → Focalise l'attention sur le corps</span><span class="highlight">✅ Ces comportements sont compréhensibles — mais ils alimentent le cycle. Les identifier est la première étape pour les changer.</span>`},
+    {type:'reflection',emoji:'📝',title:'Mon cycle personnel',prompt:'Décrivez votre cercle vicieux : qu\'est-ce qui déclenche habituellement votre anxiété ? Que ressentez-vous ensuite ? Que faites-vous pour vous rassurer ?'},
+    {type:'read',emoji:'⚔️',title:'Les trois leviers de sortie',body:`<span class="highlight">1️⃣ <strong>Changer l'interprétation</strong> — Restructurer la pensée catastrophique (Niveau 6)<br>2️⃣ <strong>Calmer le corps</strong> — Respiration et hypnose (Niveaux 4 & 5)<br>3️⃣ <strong>Modifier le comportement</strong> — Exposition graduée (Niveau 7)</span><p>Vous allez pratiquer les trois. Ensemble, ils sont redoutablement efficaces.</p>`},
+  ]},
+  { name:'Souffle & Cohérence', xp:80, steps:[
+    {type:'read',emoji:'🌬️',title:'Pourquoi respirer change tout',body:`<p>Votre système nerveux a deux modes : <strong>sympathique</strong> (alarme) et <strong>parasympathique</strong> (repos, digestion).</p><p>Quand vous êtes anxieuse, le mode sympathique domine — il contracte l'intestin, amplifie toutes les sensations.</p><span class="highlight">💡 La respiration est le seul levier conscient sur le système nerveux autonome. Une expiration longue active directement le nerf vague — le frein naturel de l'anxiété.</span>`},
+    {type:'read',emoji:'💚',title:'La technique 4-4-6',body:`<span class="highlight">🌬️ Inspirez par le nez : <strong>4 secondes</strong><br>⏸ Retenez doucement : <strong>4 secondes</strong><br>💨 Expirez lentement par la bouche : <strong>6 secondes</strong></span><p>L'expiration longue stimule le nerf vague et envoie un signal de sécurité à votre intestin.</p>`},
+    {type:'breath',emoji:'🌬️',title:'Pratiquez maintenant — 3 cycles',prompt:'Appuyez sur l\'orbe pour démarrer votre première pratique guidée.'},
+    {type:'reflection',emoji:'📝',title:'Après la respiration',prompt:'Comment vous sentez-vous après ces 3 cycles ? Avez-vous remarqué un changement dans votre ventre, votre poitrine ?'},
+    {type:'read',emoji:'🎯',title:'Votre mission quotidienne',body:`<span class="highlight">🌅 Matin : 3 minutes avant de sortir du lit<br>⚡ Au déclencheur : dès qu'une crampe ou anxiété apparaît<br>🌙 Soir : 5 minutes avant de dormir</span><p>Au bout de 3 semaines, votre système nerveux aura appris à s'auto-réguler. Votre intestin aussi en bénéficiera.</p>`},
+  ]},
+  { name:'Le Sanctuaire Intérieur', xp:120, steps:[
+    {type:'read',emoji:'🎧',title:'L\'autohypnose : qu\'est-ce que c\'est vraiment ?',body:`<p>L'hypnose n'est pas du sommeil ni de la magie. C'est un <strong>état naturel de concentration focalisée</strong> — comme quand vous êtes absorbée dans un film.</p><p>En hypnose, le cerveau passe en ondes alpha et thêta — des états où le cerveau émotionnel devient plus réceptif aux suggestions de changement.</p><span class="highlight">✨ L'hypnose intestinale réduit la sensibilité viscérale — l'intestin réagit moins fort aux stimuli normaux.</span>`},
+    {type:'read',emoji:'🌊',title:'L\'induction : comment ça marche',body:`<span class="highlight">Structure de votre séance :<br>🌬️ <strong>Induction</strong> (5-8 min) — Relaxation progressive du corps<br>🌊 <strong>Approfondissement</strong> (3-5 min) — Descendre plus profond<br>🎯 <strong>Travail ciblé</strong> (8-12 min) — Suggestions pour l'anxiété et l'intestin<br>🌅 <strong>Réveil en douceur</strong> (2-3 min)</span>`},
+    {type:'audio',emoji:'🎧',title:'Votre première séance',sub:'Induction → Relaxation & Lâcher-prise',src:'audio/seance-relaxation.mp3',duration:'~20 min',note:'Installez-vous confortablement. Casque recommandé. Bonne séance, Marion 🌿'},
+    {type:'reflection',emoji:'📝',title:'Après votre séance',prompt:'Qu\'avez-vous ressenti pendant la séance ? Y a-t-il eu un moment particulièrement puissant ?'},
+  ]},
+  { name:'Restructurer les Pensées', xp:110, steps:[
+    {type:'read',emoji:'💭',title:'Les pensées automatiques catastrophiques',body:`<p>Quand l'anxiété frappe, le cerveau produit des pensées automatiques rapides, souvent extrêmes.</p><span class="danger">Exemples typiques liés au SCI :<br>• "Cette douleur va devenir incontrôlable"<br>• "Je vais avoir une crise en public et me ridiculiser"<br>• "Mon corps va me lâcher"</span>`},
+    {type:'quiz',emoji:'🧠',title:'Reconnaître le piège cognitif',question:'Une pensée intense et convaincante est-elle forcément vraie ?',choices:[{text:'Oui, l\'intensité indique l\'importance',correct:false},{text:'Non, l\'intensité émotionnelle ne prouve pas la réalité',correct:true},{text:'Cela dépend de la situation',correct:false}],explanation:'Exactement ! L\'intensité d\'une pensée reflète l\'état émotionnel, pas la réalité factuelle.'},
+    {type:'read',emoji:'⚖️',title:'La technique du procureur & de l\'avocat',body:`<span class="highlight">🔴 <strong>La pensée</strong> : "Cette douleur va devenir incontrôlable"<br><br>⚖️ <strong>Le procureur</strong> (contre la pensée) :<br>• "Les autres fois, la douleur a passé"<br>• "Mon médecin a vérifié — ce n'est pas dangereux"<br>• "J'ai déjà géré pire"<br><br>✅ <strong>Reformulée</strong> : "Cette douleur est inconfortable mais elle passera. J'ai les outils pour la traverser."</span>`},
+    {type:'reflection',emoji:'📝',title:'Votre procès intérieur',prompt:'Prenez une pensée catastrophique récente. Écrivez les arguments contre cette pensée, puis reformulez-la de façon plus équilibrée.'},
+    {type:'read',emoji:'🌟',title:'La règle des 3 questions',body:`<span class="highlight">❓ <strong>1. C'est quoi la preuve réelle ?</strong><br>❓ <strong>2. Quelle est la probabilité réaliste que le pire arrive ?</strong><br>❓ <strong>3. Si le pire arrivait, je pourrais y faire face comment ?</strong></span><p>La troisième question est la plus puissante — elle brise le sentiment d'impuissance.</p>`},
+    {type:'read',emoji:'💪',title:'Vous êtes plus forte que vos pensées',body:`<span class="highlight">💡 Nouvelle posture : "J'ai la pensée que [quelque chose de catastrophique], mais je n'ai pas à la croire ni à lui obéir."</span><p>Ce petit espace entre vous et la pensée — c'est la liberté. C'est là que la guérison se construit.</p>`},
+  ]},
+  { name:'L\'Exposition Graduée', xp:130, steps:[
+    {type:'read',emoji:'🚶',title:'Pourquoi éviter aggrave tout',body:`<p>L'évitement est une réponse naturelle à l'anxiété. Mais chaque évitement apprend au cerveau que la situation était bien dangereuse.</p><span class="danger">Exemples avec le SCI :<br>• Refuser des sorties de peur d'une crise<br>• Ne jamais s'éloigner des toilettes connues<br>• Limiter le régime alimentaire par peur</span><span class="highlight">✅ Chaque fois que vous évitez, vous renforcez : "C'est dangereux." L'exposition dit : "Je peux le traverser."</span>`},
+    {type:'read',emoji:'🪜',title:'L\'échelle d\'exposition',body:`<span class="highlight">🏠 Niveau 1 — Sortir seule 30 min dans le quartier<br>🛒 Niveau 2 — Faire les courses seule<br>🚌 Niveau 3 — Prendre les transports en commun<br>🍽️ Niveau 4 — Dîner au restaurant<br>✈️ Niveau 5 — Partir en voyage</span><p>Votre échelle est personnelle. Construisez-la avec votre thérapeute.</p>`},
+    {type:'quiz',emoji:'🧠',title:'L\'objectif de l\'exposition',question:'Pendant une exposition, que cherche-t-on à obtenir ?',choices:[{text:'Supprimer immédiatement l\'anxiété',correct:false},{text:'Rester dans la situation jusqu\'à ce que l\'anxiété diminue naturellement',correct:true},{text:'Prouver que la situation n\'est pas anxiogène',correct:false}],explanation:'Exact ! L\'objectif est de rester assez longtemps pour que le cerveau apprenne que la situation est sûre.'},
+    {type:'reflection',emoji:'📝',title:'Votre première marche',prompt:'Quelle serait votre exposition numéro 1 — la plus facile, mais que vous évitez quand même ? Engagez-vous à la faire cette semaine.'},
+    {type:'read',emoji:'🏆',title:'La règle d\'or',body:`<span class="highlight">🔑 Ne jamais quitter la situation au pic de l'anxiété. Restez jusqu'à ce qu'elle redescende d'au moins 30-40%.</span><p>Partir au pic confirme le danger. Rester jusqu'à la descente apprend la sécurité. Vous pouvez utiliser la respiration 4-4-6 pendant l'exposition.</p>`},
+  ]},
+  { name:'Vaincre la Peur de la Peur', xp:200, steps:[
+    {type:'read',emoji:'🐉',title:'Le combat final',body:`<p>Marion, vous avez traversé 7 niveaux. Vous avez compris la mécanique de la peur, appris à respirer, restructuré vos pensées, osé l'exposition.</p><p><strong>Le combat final, c'est l'intégration.</strong></p><span class="highlight">La peur d'avoir peur se dissout progressivement, chaque fois que vous choisissez de ne pas lui obéir aveuglément.</span>`},
+    {type:'read',emoji:'🗺️',title:'Votre carte de ressources',body:`<span class="highlight">🌬️ <strong>Respiration 4-4-6</strong> — Dès qu'une anxiété monte<br>💭 <strong>3 questions</strong> — Face à une pensée catastrophique<br>🎧 <strong>Hypnose</strong> — Séance hebdomadaire minimum<br>🚶 <strong>Exposition</strong> — Une petite marche par semaine<br>📓 <strong>Journal</strong> — Observer sans juger<br>🤝 <strong>Compassion corporelle</strong> — Votre corps est un allié</span>`},
+    {type:'reflection',emoji:'🌟',title:'Ce que j\'ai appris sur moi',prompt:'Qu\'avez-vous découvert sur vous-même au cours de cette quête ? Qu\'est-ce qui a changé dans votre façon de voir vos symptômes ?'},
+    {type:'audio',emoji:'🎧',title:'Séance finale — Paix Intestinale',sub:'Votre séance d\'hypnose dédiée au SCI',src:'audio/seance-sci.mp3',duration:'~22 min',note:'Cette séance travaille sur la détente intestinale et la confiance en votre corps.'},
+    {type:'read',emoji:'👑',title:'Marion, vous avez gagné',body:`<p>Terminer ce parcours ne signifie pas que vous n'aurez plus jamais d'anxiété ni de crise de SCI.</p><p>Cela signifie que vous avez des outils. Que vous avez prouvé, niveau après niveau, que vous pouvez <em>traverser</em> l'inconfort sans vous y noyer.</p><span class="highlight">🌿 La liberté ne vient pas de l'absence de peur. Elle vient de la capacité à continuer à vivre malgré elle. Vous l'avez, Marion. 💚</span>`},
+  ]},
+];
 
-  function buildWaves() {
-    const v = document.getElementById('playerVisual');
-    v.innerHTML = '';
-    const heights = [10,18,30,22,40,28,15,35,25,12,38,20,45,16,32,28,12,40,22,18,35,10,30,20,14];
-    heights.forEach((h, i) => {
-      const bar = document.createElement('div');
-      bar.className = 'wave-bar';
-      bar.style.height = h + 'px';
-      bar.style.animationDelay = (i * 0.06) + 's';
-      v.appendChild(bar);
-    });
-  }
+// NAV
+function nav(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  updateUI();
+}
 
-  function openPlayer(title, sub, src, duration) {
-    document.getElementById('playerTitle').textContent = title;
-    document.getElementById('playerSub').textContent = sub;
-    document.getElementById('totalTime').textContent = duration;
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('currentTime').textContent = '0:00';
-    buildWaves();
-    document.getElementById('playerOverlay').classList.add('open');
-
-    if (currentAudio) { currentAudio.pause(); }
-    currentAudio = new Audio(src);
-    currentAudio.addEventListener('timeupdate', updateProgress);
-    currentAudio.addEventListener('loadedmetadata', () => {
-      const m = Math.floor(currentAudio.duration / 60);
-      const s = Math.floor(currentAudio.duration % 60).toString().padStart(2,'0');
-      document.getElementById('totalTime').textContent = m + ':' + s;
-    });
-    currentAudio.addEventListener('ended', () => {
-      isPlaying = false;
-      updatePlayIcon();
-    });
-    // Auto-play
-    currentAudio.play().then(() => {
-      isPlaying = true;
-      updatePlayIcon();
-    }).catch(() => {
-      // file not found yet — normal during dev
-      isPlaying = false;
-      showToast('⚠️ Fichier audio introuvable. Ajoutez-le dans /audio/');
-    });
-  }
-
-  function closePlayer() {
-    document.getElementById('playerOverlay').classList.remove('open');
-    if (currentAudio) { currentAudio.pause(); isPlaying = false; }
-  }
-
-  function togglePlay() {
-    if (!currentAudio) return;
-    if (isPlaying) { currentAudio.pause(); isPlaying = false; }
-    else { currentAudio.play(); isPlaying = true; }
-    updatePlayIcon();
-  }
-
-  function updatePlayIcon() {
-    const btn = document.getElementById('playIcon');
-    btn.innerHTML = isPlaying
-      ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
-      : '<path d="M8 5v14l11-7z"/>';
-  }
-
-  function updateProgress() {
-    if (!currentAudio || !currentAudio.duration) return;
-    const pct = (currentAudio.currentTime / currentAudio.duration) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    const m = Math.floor(currentAudio.currentTime / 60);
-    const s = Math.floor(currentAudio.currentTime % 60).toString().padStart(2,'0');
-    document.getElementById('currentTime').textContent = m + ':' + s;
-  }
-
-  function seekAudio(e) {
-    if (!currentAudio) return;
-    const bar = e.currentTarget;
-    const pct = e.offsetX / bar.offsetWidth;
-    currentAudio.currentTime = pct * currentAudio.duration;
-  }
-
-  function skipAudio(sec) {
-    if (!currentAudio) return;
-    currentAudio.currentTime = Math.max(0, currentAudio.currentTime + sec);
-  }
-
-  // Close overlay on background click
-  document.getElementById('playerOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closePlayer();
+// UPDATE UI
+function updateUI() {
+  const maxXP = 810;
+  const pct = Math.min(100,(S.xp/maxXP)*100);
+  const lv = Math.floor(S.xp/70)+1;
+  const ixb = document.getElementById('intro-xp-bar'); if(ixb) ixb.style.width=pct+'%';
+  const ixt = document.getElementById('intro-xp-text'); if(ixt) ixt.textContent=S.xp+' XP';
+  const ilt = document.getElementById('intro-level-text'); if(ilt) ilt.textContent='Niveau '+lv;
+  const mxf = document.getElementById('map-xp-fill'); if(mxf) mxf.style.width=pct+'%';
+  const mxl = document.getElementById('map-xp-label'); if(mxl) mxl.textContent=S.xp+' XP';
+  const sl = document.getElementById('stat-levels'); if(sl) sl.textContent=S.completed.length;
+  const sx = document.getElementById('stat-xp'); if(sx) sx.textContent=S.xp;
+  LEVELS.forEach((_,i)=>{
+    const card=document.getElementById('lcard-'+i);
+    const lock=document.getElementById('lock-'+i);
+    const check=document.getElementById('check-'+i);
+    if(!card) return;
+    const done=S.completed.includes(i);
+    const unlocked=i===0||S.completed.includes(i-1);
+    if(done){card.classList.remove('locked');card.classList.add('completed');if(lock)lock.style.display='none';if(check)check.style.display='inline';}
+    else if(unlocked){card.classList.remove('locked');if(lock)lock.style.display='none';if(check)check.style.display='none';}
+    else{card.classList.add('locked');if(lock)lock.style.display='inline';if(check)check.style.display='none';}
   });
+  renderJournal();
+}
 
-  // ── BREATHING EXERCISE ──
-  let breathInterval = null;
-  let breathPhase = 0;
-  const phases = [
-    { label: '🌬️ Inspirez…', cls: 'inhale', dur: 4000, text: 'Inspirez' },
-    { label: '⏸ Retenez…', cls: '', dur: 4000, text: 'Retenez' },
-    { label: '💨 Expirez lentement…', cls: 'exhale', dur: 6000, text: 'Expirez' },
-  ];
+// PLAY
+let curLv=0, curSt=0, selAns=null;
 
-  function startBreathing() {
-    const btn = document.getElementById('breathBtn');
-    if (breathInterval) {
-      clearTimeout(breathInterval);
-      breathInterval = null;
-      btn.textContent = '▶ Démarrer';
-      const circle = document.getElementById('breathCircle');
-      circle.className = 'breath-circle';
-      circle.innerHTML = 'Appuyez<br>pour démarrer';
-      document.getElementById('breathLabel').textContent = 'Inspirez 4 sec → Retenez 4 sec → Expirez 6 sec';
-      return;
+function startLevel(idx) {
+  const unlocked=idx===0||S.completed.includes(idx-1);
+  if(!unlocked){showToast('🔒 Terminez le niveau précédent d\'abord !');return;}
+  curLv=idx; curSt=0; selAns=null;
+  nav('play'); renderPlay();
+}
+
+function renderPlay() {
+  const lv=LEVELS[curLv];
+  const st=lv.steps[curSt];
+  document.getElementById('play-level-num').textContent='Niveau '+(curLv+1);
+  document.getElementById('play-level-name').textContent=lv.name;
+  document.getElementById('play-xp-reward').textContent='+'+lv.xp+' XP';
+  const dots=document.getElementById('step-dots');
+  dots.innerHTML='';
+  lv.steps.forEach((_,i)=>{const d=document.createElement('div');d.className='step-dot '+(i<curSt?'done':i===curSt?'active':'');dots.appendChild(d);});
+  const body=document.getElementById('play-body');
+  body.innerHTML='';
+  const card=document.createElement('div');
+  card.className='step-card';
+  const isLast=curSt>=lv.steps.length-1;
+  const nextText=isLast?'✨ Terminer le niveau':'Continuer →';
+
+  if(st.type==='read'){
+    card.innerHTML=`<div class="step-emoji">${st.emoji}</div><div class="step-title">${st.title}</div><div class="step-text">${st.body}</div>`;
+    document.getElementById('next-btn').style.display='block';
+    document.getElementById('next-btn').textContent=nextText;
+  }
+  if(st.type==='quiz'){
+    selAns=null;
+    let ch=st.choices.map((c,i)=>`<button class="choice-btn" id="ch-${i}" onclick="pickAns(${i},${c.correct})">${c.text}</button>`).join('');
+    card.innerHTML=`<div class="step-emoji">${st.emoji}</div><div class="step-title">${st.title}</div><div class="step-text" style="margin-bottom:4px">${st.question}</div><div class="choices">${ch}</div><div id="qfb" style="margin-top:12px;font-size:13px;line-height:1.5;display:none"></div>`;
+    document.getElementById('next-btn').style.display='none';
+  }
+  if(st.type==='reflection'){
+    card.innerHTML=`<div class="step-emoji">${st.emoji}</div><div class="step-title">${st.title}</div><div class="step-text" style="margin-bottom:4px">${st.prompt}</div><textarea class="reflection-input" id="refl-ta" placeholder="Écrivez ici…"></textarea>`;
+    document.getElementById('next-btn').style.display='block';
+    document.getElementById('next-btn').textContent=nextText;
+  }
+  if(st.type==='breath'){
+    card.innerHTML=`<div class="step-emoji">${st.emoji}</div><div class="step-title">${st.title}</div><div class="step-text">${st.prompt}</div>
+    <div class="breath-mini">
+      <div class="breath-orb" id="borb" onclick="startBreath()">Appuyez</div>
+      <div class="breath-instruction" id="binst">Inspirez 4 — Retenez 4 — Expirez 6</div>
+      <div class="breath-timer" id="btimer" style="display:none">4</div>
+    </div>`;
+    document.getElementById('next-btn').style.display='block';
+    document.getElementById('next-btn').textContent=nextText;
+  }
+  if(st.type==='audio'){
+    card.innerHTML=`<div class="step-emoji">${st.emoji}</div><div class="step-title">${st.title}</div><div class="step-text"><p>${st.note}</p></div>
+    <div class="audio-play-card" onclick="openAudio('${st.title}','${st.sub}','${st.src}','${st.duration}')">
+      <div class="audio-play-btn">▶</div>
+      <div><div class="audio-play-title">${st.title}</div><div class="audio-play-sub">${st.sub}</div><div class="audio-play-duration">🕐 ${st.duration}</div></div>
+    </div>`;
+    document.getElementById('next-btn').style.display='block';
+    document.getElementById('next-btn').textContent=nextText;
+  }
+  body.appendChild(card);
+  window.scrollTo(0,0);
+}
+
+function pickAns(idx, correct) {
+  if(selAns!==null) return;
+  selAns=idx;
+  const st=LEVELS[curLv].steps[curSt];
+  st.choices.forEach((_,i)=>{const b=document.getElementById('ch-'+i);if(b){b.disabled=true;if(i===idx)b.classList.add(correct?'correct':'wrong');}});
+  const fb=document.getElementById('qfb');
+  if(fb){fb.style.display='block';fb.textContent=(correct?'✅ Excellent ! ':'❌ Pas tout à fait — ')+st.explanation;fb.style.color=correct?'var(--green)':'var(--red)';}
+  const isLast=curSt>=LEVELS[curLv].steps.length-1;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=isLast?'✨ Terminer le niveau':'Continuer →';
+}
+
+function nextStep() {
+  const lv=LEVELS[curLv];
+  if(curSt<lv.steps.length-1){curSt++;selAns=null;renderPlay();}
+  else{completeLevel();}
+}
+
+function completeLevel() {
+  if(!S.completed.includes(curLv)){S.completed.push(curLv);S.xp+=LEVELS[curLv].xp;save();}
+  document.getElementById('reward-emoji').textContent=LEVEL_EMOJIS[curLv];
+  document.getElementById('reward-title').textContent=curLv===7?'🎉 Quête accomplie !':'Niveau accompli !';
+  document.getElementById('reward-sub').textContent=LEVELS[curLv].name+' maîtrisé. Vous avancez, Marion.';
+  document.getElementById('reward-xp').textContent='⚡ +'+LEVELS[curLv].xp+' XP';
+  document.getElementById('reward-unlock-text').textContent=LEVEL_MSGS[curLv];
+  nav('reward');
+}
+
+// BREATHING
+let breathOn=false, breathTO=null;
+function startBreath(){
+  if(breathOn){clearTimeout(breathTO);breathOn=false;const o=document.getElementById('borb');if(o){o.className='breath-orb';o.textContent='Appuyez';}const t=document.getElementById('btimer');if(t)t.style.display='none';return;}
+  breathOn=true;runPhase(0,0);
+}
+function runPhase(cycle,phase){
+  if(!breathOn) return;
+  const ps=[{label:'Inspirez',dur:4,cls:'expand'},{label:'Retenez',dur:4,cls:''},{label:'Expirez',dur:6,cls:'shrink'}];
+  const p=ps[phase];
+  const orb=document.getElementById('borb');
+  const inst=document.getElementById('binst');
+  const timer=document.getElementById('btimer');
+  if(!orb){breathOn=false;return;}
+  orb.className='breath-orb '+p.cls;
+  orb.textContent=p.label;
+  if(inst)inst.textContent=p.label+'…';
+  if(timer){timer.style.display='block';timer.textContent=p.dur;}
+  let cnt=p.dur;
+  function tick(){
+    if(!breathOn) return;
+    cnt--;
+    if(timer)timer.textContent=cnt;
+    if(cnt>0){breathTO=setTimeout(tick,1000);}
+    else{
+      const np=(phase+1)%3;
+      const nc=np===0?cycle+1:cycle;
+      if(nc>=3){breathOn=false;if(orb){orb.className='breath-orb';orb.textContent='✅ Bravo !';}if(inst)inst.textContent='3 cycles accomplis !';if(timer)timer.style.display='none';return;}
+      breathTO=setTimeout(()=>runPhase(nc,np),500);
     }
-    btn.textContent = '⏹ Arrêter';
-    breathPhase = 0;
-    runBreathPhase();
   }
+  breathTO=setTimeout(tick,1000);
+}
 
-  function runBreathPhase() {
-    const p = phases[breathPhase % 3];
-    const circle = document.getElementById('breathCircle');
-    circle.className = 'breath-circle ' + p.cls;
-    circle.innerHTML = p.text;
-    document.getElementById('breathLabel').textContent = p.label;
-    breathInterval = setTimeout(() => {
-      breathPhase++;
-      runBreathPhase();
-    }, p.dur);
-  }
+// JOURNAL
+let pickedEmoji=null;
+function pickEmotion(el,e){document.querySelectorAll('#journal-sc .choice-btn').forEach(b=>b.classList.remove('correct'));el.classList.add('correct');pickedEmoji=e;}
+function saveJournal(){
+  const ta=document.getElementById('journal-ta');
+  const text=ta?ta.value.trim():'';
+  if(!text&&!pickedEmoji){showToast('Sélectionnez une émotion ou écrivez quelque chose 💬');return;}
+  S.journal.unshift({emoji:pickedEmoji||'📝',text:text||'(Sans note)',date:new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})});
+  if(S.journal.length>40)S.journal=S.journal.slice(0,40);
+  S.xp+=5; save();
+  if(ta)ta.value='';
+  pickedEmoji=null;
+  document.querySelectorAll('#journal-sc .choice-btn').forEach(b=>b.classList.remove('correct'));
+  renderJournal();
+  showToast('Entrée enregistrée ✅ +5 XP');
+}
+function renderJournal(){
+  const c=document.getElementById('journal-entries');
+  if(!c) return;
+  if(!S.journal.length){c.innerHTML='<div style="font-size:13px;color:var(--text-muted);text-align:center;padding:20px 0;">Vos entrées apparaîtront ici.</div>';return;}
+  c.innerHTML=S.journal.map(e=>`<div style="background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:22px">${e.emoji}</span><span style="font-size:11px;color:var(--text-muted)">${e.date}</span></div><div style="font-size:13px;color:var(--text-soft);line-height:1.5">${e.text}</div></div>`).join('');
+}
 
-  // ── EMOTION SELECTION ──
-  let selectedEmotion = null;
-  function selectEmotion(el, emoji) {
-    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedEmotion = emoji;
-  }
+// AUDIO
+let aud=null, audOn=false;
+function buildWaves(){const pw=document.getElementById('pw');pw.innerHTML='';[8,16,28,20,38,26,12,34,22,10,36,18,42,14,30,26,10,38,20,16,32].forEach((h,i)=>{const b=document.createElement('div');b.className='wbar';b.style.height=h+'px';b.style.animationDelay=(i*0.055)+'s';pw.appendChild(b);});}
+function openAudio(title,sub,src,dur){
+  document.getElementById('pt').textContent=title;
+  document.getElementById('ps').textContent=sub;
+  document.getElementById('ptt').textContent=dur;
+  document.getElementById('pf').style.width='0%';
+  document.getElementById('pct').textContent='0:00';
+  buildWaves();
+  document.getElementById('po').classList.add('open');
+  if(aud)aud.pause();
+  aud=new Audio(src);
+  aud.addEventListener('timeupdate',updAud);
+  aud.addEventListener('loadedmetadata',()=>{const m=Math.floor(aud.duration/60);const s=String(Math.floor(aud.duration%60)).padStart(2,'0');document.getElementById('ptt').textContent=m+':'+s;});
+  aud.addEventListener('ended',()=>{audOn=false;document.getElementById('pmb').textContent='▶';});
+  aud.play().then(()=>{audOn=true;document.getElementById('pmb').textContent='⏸';}).catch(()=>showToast('⚠️ Fichier audio introuvable — ajoutez-le dans /audio/'));
+}
+function closeAudio(){document.getElementById('po').classList.remove('open');if(aud){aud.pause();audOn=false;}}
+function toggleAudio(){if(!aud)return;if(audOn){aud.pause();audOn=false;document.getElementById('pmb').textContent='▶';}else{aud.play();audOn=true;document.getElementById('pmb').textContent='⏸';}}
+function updAud(){if(!aud||!aud.duration)return;const p=(aud.currentTime/aud.duration)*100;document.getElementById('pf').style.width=p+'%';const m=Math.floor(aud.currentTime/60);const s=String(Math.floor(aud.currentTime%60)).padStart(2,'0');document.getElementById('pct').textContent=m+':'+s;}
+function seekAudio(e){if(!aud)return;aud.currentTime=(e.offsetX/e.currentTarget.offsetWidth)*aud.duration;}
+function skipA(sec){if(!aud)return;aud.currentTime=Math.max(0,aud.currentTime+sec);}
+document.getElementById('po').addEventListener('click',e=>{if(e.target===document.getElementById('po'))closeAudio();});
 
-  // ── JOURNAL ──
-  let journalEntries = JSON.parse(localStorage.getItem('marion-journal') || '[]');
+// TOAST
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
-  function saveEntry() {
-    const text = document.getElementById('journal-text').value.trim();
-    if (!text && !selectedEmotion) {
-      showToast('Sélectionnez une émotion ou écrivez quelque chose 💬');
-      return;
-    }
-    const entry = {
-      emoji: selectedEmotion || '📝',
-      text: text || '(Sans note)',
-      date: new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' })
-    };
-    journalEntries.unshift(entry);
-    localStorage.setItem('marion-journal', JSON.stringify(journalEntries.slice(0, 30)));
-    document.getElementById('journal-text').value = '';
-    selectedEmotion = null;
-    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
-    renderEntries();
-    showToast('Entrée enregistrée ✓');
-  }
-
-  function renderEntries() {
-    const container = document.getElementById('past-entries');
-    if (!journalEntries.length) {
-      container.innerHTML = '<p class="section-label" style="margin-top:24px;">Entrées précédentes</p><p style="font-size:13px;color:var(--text-soft);text-align:center;padding:20px 0;">Vos entrées apparaîtront ici.</p>';
-      return;
-    }
-    container.innerHTML = '<p class="section-label" style="margin-top:24px;">Entrées précédentes</p>' +
-      journalEntries.map(e => `
-        <div class="entry-item">
-          <div class="entry-item-header">
-            <span class="entry-emoji">${e.emoji}</span>
-            <span class="entry-date">${e.date}</span>
-          </div>
-          <div class="entry-text">${e.text}</div>
-        </div>
-      `).join('');
-  }
-
-  renderEntries();
+// INIT
+updateUI();
 </script>
 </body>
 </html>
